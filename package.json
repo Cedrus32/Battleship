@@ -1,0 +1,33 @@
+{
+  "name": "battleship",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --silent false",
+    "watch": "webpack --watch",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cedrus32/Battleship.git"
+  },
+  "keywords": [],
+  "author": "Cedrus32",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cedrus32/Battleship/issues"
+  },
+  "homepage": "https://github.com/Cedrus32/Battleship#readme",
+  "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.20.2",
+    "babel-jest": "^29.4.1",
+    "css-loader": "^6.7.3",
+    "eslint": "^8.33.0",
+    "jest": "^29.4.1",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
