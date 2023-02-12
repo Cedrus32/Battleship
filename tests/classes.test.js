@@ -1,4 +1,4 @@
-import { default as makeShip, makeGameboard } from '../src/scripts/classes.js';
+import { default as makeShip, makeGameboard, makePlayer } from '../src/scripts/classes.js';
 
 let ship;
 test('create ship with length', () => {
@@ -72,7 +72,7 @@ test('gameboard tracks sunk ships', () => {
     for (let i = 0; i < hitList.length; i++) {
         gameboard.receiveAttack(hitList[i]);
     }
-    console.log(gameboard.ships[1]);
+    // console.log(gameboard.ships[1]);
     expect(gameboard.shipsSunk).toEqual(1);
 })
 
@@ -85,8 +85,40 @@ test('returns true when all ships are sunk', () => {
     for (let i = 0; i < hitList.length; i++) {
         gameboard.receiveAttack(hitList[i]);
     }
-    console.log(gameboard.ships[0]);
+    // console.log(gameboard.ships[0]);
     expect(gameboard.isLoser()).toBeTruthy();
+})
+
+// PLAYERS
+let human = makePlayer('human');
+let computer = makePlayer('computer');
+test('create human player', () => {
+    expect(human.type).toEqual('human');
+})
+test('create computer player', () => {
+    expect(computer.type).toEqual('computer');
+})
+
+// SENDING/RECIEVING ATTACKS
+human.board.placeShip('00', 'h', 5);
+human.board.placeShip('02', 'v', 5);
+computer.board.placeShip('32', 'v', 3);
+computer.board.placeShip('26', 'h', 5);
+test('human makes miss attack on computer', () => {
+    human.sendAttack('22', computer.board);
+    expect(computer.board.grid[2][2]).toEqual('o');
+})
+test('human makes hit attack on computer', () => {
+    human.sendAttack('32', computer.board);
+    expect(computer.board.grid[2][3]).toEqual('x');
+})
+test('computer makes miss attack on human', () => {
+    computer.sendAttack('01', human.board);
+    expect(human.board.grid[1][0]).toEqual('o');
+})
+test('computer makes hit attack on human', () => {
+    computer.sendAttack('00', human.board);
+    expect(human.board.grid[0][0]).toEqual('x');
 })
 
 //// board "places" ships by calling makeShip function and pushing it to ships[] array

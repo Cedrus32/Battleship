@@ -1,3 +1,4 @@
+// CLASSES
 class Ship {
     constructor(length = null, coords = null) {
         this.length = length;
@@ -123,14 +124,41 @@ class Gameboard {
         }
     }
 }
+class Human {
+    constructor() {
+        this.type = 'human';
+        this.board = makeGameboard();
+    }
 
+    sendAttack (coord, board) {
+        board.receiveAttack(coord);
+        return 'make move'; // ! remove after testing
+    }
+}
+
+class Computer extends Human {
+    constructor() {
+        super(Human);
+        this.type = 'computer';
+    }
+
+    // AI that will use makeMove();
+    // AI that will place ships
+}
+
+// FACTORIES
 function makeShip(length, coords) {
-    let ship = new Ship(length, coords);
-    return ship;
+    return new Ship(length, coords);
 }
 function makeGameboard() {
-    let gameboard = new Gameboard();
-    return gameboard;
+    return new Gameboard();
+}
+function makePlayer(type) {
+    if (type === 'human') {
+        return new Human();
+    } else if (type === 'computer') {
+        return new Computer();
+    }
 }
 
-export { makeShip as default, makeGameboard };
+export { makeShip as default, makeGameboard, makePlayer };
