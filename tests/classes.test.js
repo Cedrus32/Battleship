@@ -121,6 +121,10 @@ test('computer makes hit attack on human', () => {
     expect(human.board.grid[0][0]).toEqual('x');
 })
 
+// COMPUTER AI
+computer.randomizeShips();
+console.log(computer.board.ships);
+
 //// board "places" ships by calling makeShip function and pushing it to ships[] array
 //// board checks received attacks agains ships[]...
 //// ... then logs hits & misses in array spread representing play grid

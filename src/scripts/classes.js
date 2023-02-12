@@ -40,8 +40,9 @@ class Gameboard {
         let coordSet = this.getCoords(startCoord, dir, shipLen);
         if (this.setIsValid(coordSet)) {
             this.ships.push(makeShip(shipLen, coordSet));
+            return true;    // used by computer AI to mark valid placements
         }
-        
+        return false;   // ""
     }
     getCoords(startCoord, dir, shipLen) {
         let coordSet = [startCoord];
@@ -68,6 +69,7 @@ class Gameboard {
         return coordSet;
     }
     setIsValid(coordSet) {
+        // ! also check that coordset doesn't go beyond the board
         for (let i = 0; i < coordSet.length; i++) {
             let newX = parseInt(coordSet[i].split('')[0]);
             let newY = parseInt(coordSet[i].split('')[1]);
@@ -132,7 +134,6 @@ class Human {
 
     sendAttack (coord, board) {
         board.receiveAttack(coord);
-        return 'make move'; // ! remove after testing
     }
 }
 
@@ -142,8 +143,35 @@ class Computer extends Human {
         this.type = 'computer';
     }
 
-    // AI that will use makeMove();
     // AI that will place ships
+    randomizeShips() {
+        let availShips = [1, 1, 2, 2, 3, 4, 5];
+        let dirs = ['h', 'v'];
+        availShips.splice(6);   // ! remove after testing
+        availShips.splice(4, 1);    // ! remove after testing
+        
+        while (availShips.length > 0) {
+            let shipLen = availShips[0];
+            availShips.splice(0, 1);
+
+            let dir = dirs[Math.floor(Math.random() * dirs.length)];
+
+            let valid = false;
+            while (valid === false) {
+                let coord = '';
+                let i = 0;
+                while (i < 2) {
+                    let index = Math.floor(Math.random() * 10).toString();
+                    coord += index;
+                    i++;
+                }
+                console.log(coord, dir, shipLen);
+                valid = this.board.placeShip(coord, dir, shipLen);
+            }
+        }
+    }
+
+    // AI that will use makeMove();
 }
 
 // FACTORIES
