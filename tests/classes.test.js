@@ -23,8 +23,8 @@ test('change sunk bool', () => {
 })
 
 
-let gameboard = makeGameboard();
 // HORIZONTAL PLACEMENT
+let gameboard = makeGameboard();
 test('creates horizontal coordinate set', () => {
     expect(gameboard.getCoords('00', 'h', 5)).toEqual(['00', '10', '20', '30', '40']);
 })
@@ -74,6 +74,7 @@ test('gameboard marks miss', () => {
     expect(gameboard.grid[3][3]).toEqual('o');
 })
 
+
 // TRACK SUNK SHIPS
 test('gameboard tracks sunk ships', () => {
     let hitList = ['02', '03', '04', '05', '06'];
@@ -83,6 +84,7 @@ test('gameboard tracks sunk ships', () => {
     // console.log(gameboard.ships[1]);
     expect(gameboard.shipsSunk).toEqual(1);
 })
+
 
 // TRACK WIN/LOSE
 test('returns false when all ships are not sunk', () => {
@@ -96,6 +98,7 @@ test('returns true when all ships are sunk', () => {
     // console.log(gameboard.ships[0]);
     expect(gameboard.isLoser()).toBeTruthy();
 })
+
 
 // PLAYERS
 let human = makePlayer('human');
@@ -129,6 +132,7 @@ test('computer makes hit attack on human', () => {
     expect(human.board.grid[0][0]).toEqual('x');
 })
 
+
 // COMPUTER AI
 computer.randomizeShips();
 // console.log(computer.board.ships);
@@ -138,10 +142,3 @@ while (i < 20) {
     i++;
 }
 // console.log(human.board.grid);
-
-//// board "places" ships by calling makeShip function and pushing it to ships[] array
-//// board checks received attacks agains ships[]...
-//// ... then logs hits & misses in array spread representing play grid
-//// ... and updates ship hits if needed...
-//// ...... and checks if the ship is sunk
-//// board checks how many ships are sunk (win)
