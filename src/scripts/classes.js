@@ -132,7 +132,7 @@ class Human {
         this.board = makeGameboard();
     }
 
-    sendAttack (coord, board) {
+    sendAttack(coord, board) {
         board.receiveAttack(coord);
     }
 }
@@ -141,9 +141,9 @@ class Computer extends Human {
     constructor() {
         super(Human);
         this.type = 'computer';
+        this.attacksMade = [];
     }
 
-    // AI that will place ships
     randomizeShips() {
         let availShips = [1, 1, 2, 2, 3, 4, 5];
         let dirs = ['h', 'v'];
@@ -165,13 +165,27 @@ class Computer extends Human {
                     coord += index;
                     i++;
                 }
-                console.log(coord, dir, shipLen);
                 valid = this.board.placeShip(coord, dir, shipLen);
             }
         }
     }
-
-    // AI that will use makeMove();
+    randomizeAttack(board) {
+        let valid = false;
+        while (valid === false) {
+            let coord = '';
+            let i = 0;
+            while (i < 2) {
+                let index = Math.floor(Math.random() * 10).toString();
+                coord += index;
+                i++;
+            }
+            if (!this.attacksMade.includes(coord)) {
+                valid = true;
+                this.attacksMade.push(coord);
+                this.sendAttack(coord, board)
+            }
+        }
+    }
 }
 
 // FACTORIES

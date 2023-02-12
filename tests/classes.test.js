@@ -123,7 +123,13 @@ test('computer makes hit attack on human', () => {
 
 // COMPUTER AI
 computer.randomizeShips();
-console.log(computer.board.ships);
+// console.log(computer.board.ships);
+let i = 0;
+while (i < 20) {
+    computer.randomizeAttack(human.board);
+    i++;
+}
+// console.log(human.board.grid);
 
 //// board "places" ships by calling makeShip function and pushing it to ships[] array
 //// board checks received attacks agains ships[]...
