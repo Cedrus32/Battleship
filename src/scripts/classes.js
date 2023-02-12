@@ -205,4 +205,5 @@ function makePlayer(type) {
     }
 }
 
-export { makeShip as default, makeGameboard, makePlayer };
+export { makeShip as default, makeGameboard, makePlayer };   // testing export
+// export default makePlayer;
