@@ -31,6 +31,10 @@ test('creates horizontal coordinate set', () => {
 test('gameboard returns true for valid horizontal coordSet', () => {
     expect(gameboard.setIsValid(['00', '10', '20', '30', '40'])).toBeTruthy();
 })
+test('catches invalid horizontal placement', () => {
+    let hCoordSet = gameboard.getCoords('90', 'h', 3);
+    expect(gameboard.setIsValid(hCoordSet)).toBeFalsy();
+})
 test('places ship at valid horizontal coords', () => {
     gameboard.placeShip('00', 'h', 5);
     expect(gameboard.ships[0] !== undefined).toBeTruthy();
@@ -48,6 +52,10 @@ test('places ship at valid vertical coords', () => {
 })
 test('gameboard returns false for invalid coordSet', () => {
     expect(gameboard.setIsValid(['00', '01', '02', '03', '04'])).toBeFalsy();
+})
+test('catches invalid vertical placement', () => {
+    let vCoordSet = gameboard.getCoords('09', 'v', 3);
+    expect(gameboard.setIsValid(vCoordSet)).toBeFalsy();
 })
 // HITS
 test('gameboard returns true if hit', () => {

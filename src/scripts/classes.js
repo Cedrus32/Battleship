@@ -69,19 +69,22 @@ class Gameboard {
         return coordSet;
     }
     setIsValid(coordSet) {
-        // ! also check that coordset doesn't go beyond the board
         for (let i = 0; i < coordSet.length; i++) {
+            if (coordSet[i].length > 2) {
+                console.log('coord out of bounds');
+                return false;
+            }
             let newX = parseInt(coordSet[i].split('')[0]);
             let newY = parseInt(coordSet[i].split('')[1]);
             for (let j = 0; j < this.ships.length; j++) {
                 let ship = this.ships[j];
-                for (let k = 0; k < ship.coords.length; k++) {
-                    let placedX = parseInt(ship.coords[k].split('')[0]);
-                    let placedY = parseInt(ship.coords[k].split('')[1]);
-                    let buffer = [placedX - 1, placedX + 1, placedY - 1, placedY + 1];
-                    if (newX >= buffer[0] && newX <= buffer[1] && newY >= buffer[2] && newY <= buffer[3]) {
-                        return false;
-                    }
+                let xMin = parseInt(ship.coords[0].split('')[0]) - 1;
+                let xMax = parseInt(ship.coords[ship.coords.length - 1].split('')[0]) + 1
+                let yMin = parseInt(ship.coords[0].split('')[1]) - 1;
+                let yMax = parseInt(ship.coords[ship.coords.length - 1].split('')[1]) + 1
+                if (newX >= xMin && newX <= xMax && newY >= yMin && newY <= yMax) {
+                    console.log('coord already taken');
+                    return false
                 }
             }
         }
@@ -136,7 +139,6 @@ class Human {
         board.receiveAttack(coord);
     }
 }
-
 class Computer extends Human {
     constructor() {
         super(Human);
