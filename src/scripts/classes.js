@@ -149,8 +149,8 @@ class Computer extends Human {
     randomizeShips() {
         let availShips = [1, 1, 2, 2, 3, 4, 5];
         let dirs = ['h', 'v'];
-        availShips.splice(6);   // ! remove after testing
-        availShips.splice(4, 1);    // ! remove after testing
+        // availShips.splice(6);   // ! remove after testing
+        // availShips.splice(4, 1);    // ! remove after testing
         
         while (availShips.length > 0) {
             let shipLen = availShips[0];
@@ -205,5 +205,5 @@ function makePlayer(type) {
     }
 }
 
-export { makeShip as default, makeGameboard, makePlayer };   // testing export
-// export default makePlayer;
+// export { makeShip as default, makeGameboard, makePlayer };   // testing export
+export default makePlayer;
