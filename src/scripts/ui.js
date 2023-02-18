@@ -10,13 +10,7 @@ const ui = (() => {
         let i = 0;
         while (i < playerBoards.length) {
             generateGrid(playerBoards[i]);
-            let playerType;
-            if (i === 0) {
-                playerType = 'h';
-            } else {
-                playerType = 'c';
-            }
-            generateShipTallies(shipTallies[i], playerType);
+            generateShipTallies(shipTallies[i], i);
             i++;
         }
     }
@@ -34,7 +28,13 @@ const ui = (() => {
             i++;
         }
     }
-    function generateShipTallies(tallyContainer, player) {
+    function generateShipTallies(tallyContainer, index) {
+        let playerType;
+        if (index === 0) {
+            playerType = 'h';
+        } else  {
+            playerType = 'c';
+        }
         let ships = [[5, '.ship', 'acc'],
                      [4, '.ship', 'bs'],
                      [3, '.ship', 'crus'],
@@ -44,7 +44,7 @@ const ui = (() => {
                      [1, '.ship', 'sub2']
                     ];
         for (let i = 0; i < ships.length; i++) {
-            let cellContainer = create.div('', ships[i][1], `#${player}-${ships[i][2]}`);
+            let cellContainer = create.div('', ships[i][1], `#${playerType}-${ships[i][2]}`);
             for (let j = 0; j < ships[i][0]; j++) {
                 let cell = create.span('');
                 cellContainer.append(cell);
