@@ -11,6 +11,9 @@
 
     --board: calc(var(--pw-unit) * 3);
     --board-cell: calc(var(--board) / 10);
+
+    --tab-height: calc(var(--main-spacing) * 2);
+    --tab-width: calc(var(--tab-height) * 3);
 }
 
 /* FLEX */
@@ -20,14 +23,16 @@ main,
 .tally,
 .ship,
 .board,
-.row {
+.row,
+footer {
     display: flex;
 }
 
 body,
 main,
 .tally,
-.board {
+.board,
+footer {
     flex-flow: column;
 }
 
@@ -104,12 +109,21 @@ body {
                 width: var(--board-cell);
                 border: green 1px solid; /* ! testing */
             }
+
+    footer,
+    #footer-tab {
+        background-color: rgba(255, 166, 0, 0.3);   /* ! testing */
+    }
     
     footer {
         height: calc(100% - calc(var(--board-cell) * 10) - calc(var(--main-spacing) * 4));
         width: 100%;
-        background-color: rgba(255, 166, 0, 0.3);   /* ! testing */
     }
+
+        #footer-tab {
+            height: var(--tab-height);
+            width: var(--tab-width);
+        }
 
 /* POSITIONING */
 /* mobile */
@@ -118,3 +132,9 @@ body {
         bottom: 0%;
         left: 0%;
     }
+
+        #footer-tab {
+            position: relative;
+            top: calc(var(--tab-height) * -1);
+            margin: 0px auto;
+        }
