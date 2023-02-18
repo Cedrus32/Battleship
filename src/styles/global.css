@@ -86,7 +86,6 @@ body {
         #human,
         #computer {
             width: var(--player-width);
-            background-color: rgba(255, 0, 0, 0.3);  /* ! testing */
         }
 
             .tally {
@@ -99,7 +98,6 @@ body {
                 }
 
                 .ship span {
-                    background-color: blue;
                     height: var(--ship-cell);
                     width: var(--ship-cell);
                 }
@@ -107,13 +105,7 @@ body {
             .cell {
                 height: var(--board-cell);
                 width: var(--board-cell);
-                border: green 1px solid; /* ! testing */
             }
-
-    footer,
-    #footer-tab {
-        background-color: rgba(255, 166, 0, 0.3);   /* ! testing */
-    }
     
     footer {
         height: calc(100% - calc(var(--board-cell) * 10) - calc(var(--main-spacing) * 4));
@@ -138,3 +130,23 @@ body {
             top: calc(var(--tab-height) * -1);
             margin: 0px auto;
         }
+
+/* COLORS */
+
+#human,
+#computer {
+    background-color: rgba(255, 0, 0, 0.3);  /* ! testing */
+}
+
+.ship span {
+    background-color: blue;
+}
+
+.cell {
+    border: green 1px solid; /* ! testing */
+}
+
+footer,
+#footer-tab {
+    background-color: rgba(255, 166, 0, 0.3);   /* ! testing */
+}
