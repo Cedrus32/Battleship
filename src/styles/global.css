@@ -1,0 +1,98 @@
+/* GLOBAL VARIABLES */
+
+:root {
+    --main-spacing: 5vw;
+    --player-width: calc(100vw - calc(var(--main-spacing) * 2));
+        --pw-unit: calc(var(--player-width) / 5);
+
+    --tally-buffer: calc(var(--pw-unit) * 1);
+    --tally-spacing: 1vw;
+    --ship-cell: calc(calc(var(--tally-buffer) - calc(var(--tally-spacing) * 2)) / 5);
+
+    --board: calc(var(--pw-unit) * 3);
+    --board-cell: calc(var(--board) / 10);
+}
+
+/* DISPLAY */
+
+body,
+main,
+.tally,
+.ship,
+.board,
+.row {
+    display: flex;
+}
+
+body,
+main,
+.tally,
+.board {
+    flex-flow: column;
+}
+
+    main {
+        gap: var(--main-spacing);
+    }
+
+        #human .ship {
+            justify-content: flex-end;
+        }
+
+#human,
+#computer {
+    display: grid;
+    grid-template-columns: var(--tally-buffer) var(--board) var(--tally-buffer);
+    grid-template-rows: 1fr;
+}
+
+#human {
+    grid-template-areas: 'tally board .';
+}
+
+#computer {
+    grid-template-areas: '. board tally';
+}
+
+    .tally {
+        grid-area: tally;
+    }
+
+    .board {
+        grid-area: board;
+    }
+
+/* MOBILE SIZING */
+
+body {
+    height: 100vh;
+    width: 100vw;
+    padding: var(--main-spacing);
+}
+
+    #human,
+    #computer {
+        width: var(--player-width);
+        border: red 1px solid;  /* ! testing */
+    }
+
+        .tally {
+            padding: var(--tally-spacing);
+        }
+
+            .ship {
+                height: auto;
+                width: 100%;
+            }
+
+            .ship span {
+                background-color: blue;
+                height: var(--ship-cell);
+                width: var(--ship-cell);
+            }
+
+        .cell {
+            height: var(--board-cell);
+            width: var(--board-cell);
+            border: green 1px solid; /* ! testing */
+        }
