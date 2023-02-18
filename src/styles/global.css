@@ -3,7 +3,7 @@
 :root {
     --main-spacing: 5vw;
     --player-width: calc(100vw - calc(var(--main-spacing) * 2));
-        --pw-unit: calc(var(--player-width) / 4);
+    --pw-unit: calc(var(--player-width) / 4);
 
     --tally-buffer: calc(var(--pw-unit) * 1);
     --tally-spacing: 1vw;
@@ -75,7 +75,7 @@ body {
 }
 
     main {
-        height: 100%;
+        height: 100vh;
     }
 
         #human,
@@ -104,9 +104,17 @@ body {
                 width: var(--board-cell);
                 border: green 1px solid; /* ! testing */
             }
+    
+    footer {
+        height: calc(100% - calc(var(--board-cell) * 10) - calc(var(--main-spacing) * 4));
+        width: 100%;
+        background-color: rgba(255, 166, 0, 0.3);   /* ! testing */
+    }
 
 /* POSITIONING */
 /* mobile */
     footer {
-        background-color: rgba(255, 166, 0, 0.3);   /* ! testing */
+        position: absolute;
+        bottom: 0%;
+        left: 0%;
     }
