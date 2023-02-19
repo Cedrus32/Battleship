@@ -16,7 +16,7 @@
     --tab-width: calc(var(--tab-height) * 3);
 }
 
-/* FLEX */
+/* DISPLAY FLEX */
 
 body,
 main,
@@ -24,7 +24,10 @@ main,
 .ship,
 .board,
 .row,
-footer {
+footer,
+#footer-content,
+#ship-menu,
+#controls {
     display: flex;
 }
 
@@ -32,19 +35,13 @@ body,
 main,
 .tally,
 .board,
-footer {
+footer,
+#ship-menu,
+#controls {
     flex-flow: column;
 }
 
-    main {
-        justify-content: space-between;
-    }
-
-        #human .ship {
-            justify-content: flex-end;
-        }
-
-/* GRID */
+/* DISPLAY GRID */
 
 #human,
 #computer {
@@ -69,6 +66,40 @@ footer {
     .board {
         grid-area: board;
     }
+
+/* POSITIONING */
+/* mobile */
+
+main,
+#ship-menu,
+#controls {
+    justify-content: space-between;
+}
+
+    #human .tally .ship {
+        justify-content: flex-end;
+    }
+
+footer {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+}
+
+    #footer-tab,
+    #footer-content {
+        position: relative;
+        top: calc(var(--tab-height) * -1);
+    }
+
+    #footer-tab {
+        margin: 0px auto;
+    }
+
+        #controls {
+            flex-wrap: wrap;
+            align-content: center;
+        }
 
 /* SIZING */
 /* mobile */
@@ -117,19 +148,16 @@ body {
             width: var(--tab-width);
         }
 
-/* POSITIONING */
-/* mobile */
-    footer {
-        position: absolute;
-        bottom: 0%;
-        left: 0%;
-    }
+            #footer-content {
+                height: 100%;
+                margin-bottom: calc(var(--tab-height) * -1);
+                padding: var(--main-spacing);
+            }
 
-        #footer-tab {
-            position: relative;
-            top: calc(var(--tab-height) * -1);
-            margin: 0px auto;
-        }
+                #ship-menu,
+                #controls {
+                    width: 50%;
+                }
 
 /* COLORS */
 
@@ -146,7 +174,7 @@ body {
     border: green 1px solid; /* ! testing */
 }
 
-footer,
-#footer-tab {
+#footer-tab,
+#footer-content {
     background-color: rgba(255, 166, 0, 0.3);   /* ! testing */
 }
