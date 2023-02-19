@@ -4,8 +4,9 @@ import create from './create.js';
 const ui = (() => {
     let playerBoards = [document.getElementById('human').lastElementChild, document.getElementById('computer').lastElementChild];
     let shipTallies = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
-    let footer = document.querySelector('footer');
+    let footer = [document.getElementById('ship-menu'), document.getElementById('controls')];
 
+    // driver method
     function init() {
         let i = 0;
         while (i < playerBoards.length) {
@@ -13,7 +14,10 @@ const ui = (() => {
             generateShipTallies(shipTallies[i], i);
             i++;
         }
+        generateShipMenu();
     }
+
+    // helper methods
     function generateGrid(board) {
         let i = 0;
         while (i < 10) {
@@ -35,6 +39,12 @@ const ui = (() => {
         } else  {
             playerType = 'c';
         }
+        makeShipIcons(playerType, tallyContainer);
+    }
+    function generateShipMenu() {
+        makeShipIcons('', footer[0]);
+    }
+    function makeShipIcons(playerType, container) {
         let ships = [[5, '.ship', 'acc'],
                      [4, '.ship', 'bs'],
                      [3, '.ship', 'crus'],
@@ -44,12 +54,17 @@ const ui = (() => {
                      [1, '.ship', 'sub2']
                     ];
         for (let i = 0; i < ships.length; i++) {
-            let cellContainer = create.div('', ships[i][1], `#${playerType}-${ships[i][2]}`);
+            let cellContainer;
+            if (playerType === '') {
+                cellContainer = create.div('', ships[i][1], `#${ships[i][2]}`);
+            } else {
+                cellContainer = create.div('', ships[i][1], `#${playerType}-${ships[i][2]}`);
+            }
             for (let j = 0; j < ships[i][0]; j++) {
                 let cell = create.span('');
                 cellContainer.append(cell);
             }
-            tallyContainer.append(cellContainer);
+            container.append(cellContainer);
         }
     }
 
