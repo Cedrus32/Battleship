@@ -14,6 +14,9 @@
 
     --tab-height: calc(var(--main-spacing) * 2);
     --tab-width: calc(var(--tab-height) * 3);
+
+    --menu-width: calc(calc(100vw - calc(var(--main-spacing) * 2)) / 2);
+    --menu-cell: calc(var(--menu-width) / 5)
 }
 
 /* DISPLAY FLEX */
@@ -128,7 +131,7 @@ body {
                     width: 100%;
                 }
 
-                .ship span {
+                .tally .ship span {
                     height: var(--ship-cell);
                     width: var(--ship-cell);
                 }
@@ -159,6 +162,11 @@ body {
                     width: 50%;
                 }
 
+                    #ship-menu .ship span {
+                        height: var(--menu-cell);
+                        width: var(--menu-cell);
+                    }
+
 /* COLORS */
 
 #human,
@@ -176,5 +184,5 @@ body {
 
 #footer-tab,
 #footer-content {
-    background-color: rgba(255, 166, 0, 0.3);   /* ! testing */
+    background-color: rgba(255, 166, 0.3);   /* ! testing */
 }
