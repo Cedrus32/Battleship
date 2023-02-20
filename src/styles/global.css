@@ -7,7 +7,7 @@
 
     --sidebar-width: calc(var(--player-fr) * 1);
     --tally-spacing: 1vw;
-    --ship-cell: calc(calc(var(--sidebar-width) - calc(var(--tally-spacing) * 2)) / 10);
+    --ship-cell: calc(calc(var(--sidebar-width) - calc(var(--tally-spacing) * 2)) / 5);
 
     --board-width: calc(var(--player-fr) * 3);
     --board-cell: calc(var(--board-width) / 10);
@@ -64,12 +64,20 @@ body,
 /* POSITIONING */
 
 main {
-    column-gap: var(--main-spacing);
+    gap: var(--main-spacing);
 }
 
-    .tally {
-        gap: calc(var(--tally-spacing) / 2);
+    #ship-content {
+        gap: var(--main-spacing);
     }
+
+        .tally {
+            gap: calc(var(--tally-spacing) / 2);
+        }
+
+        #ship-menu {
+            gap: var(--tally-spacing);
+        }
 
 /* SIZING */
 
@@ -96,6 +104,11 @@ body {
             }
 
             .tally .ship span {
+                height: calc(var(--ship-cell) / 2);
+                width: calc(var(--ship-cell) / 2);
+            }
+
+            #ship-menu .ship span {
                 height: var(--ship-cell);
                 width: var(--ship-cell);
             }
