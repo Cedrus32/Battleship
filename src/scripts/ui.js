@@ -3,8 +3,9 @@ import create from './create.js';
 
 const ui = (() => {
     let playerBoards = [document.getElementById('human').lastElementChild, document.getElementById('computer').lastElementChild];
-    let shipTallies = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
-    let footer = [document.getElementById('ship-menu'), document.getElementById('controls')];
+    let shipTallies = [document.getElementById('human').firstElementChild.firstElementChild, document.getElementById('computer').firstElementChild];
+    let shipMenu = document.getElementById('human').firstElementChild.lastElementChild;
+    let footer = document.querySelector('footer');
 
     // driver method
     function init() {
@@ -42,7 +43,7 @@ const ui = (() => {
         makeShipIcons(playerType, tallyContainer);
     }
     function generateShipMenu() {
-        makeShipIcons('', footer[0]);
+        makeShipIcons('', shipMenu);
     }
     function makeShipIcons(playerType, container) {
         let ships = [[5, '.ship', 'acc'],

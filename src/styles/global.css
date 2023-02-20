@@ -1,46 +1,37 @@
 /* GLOBAL VARIABLES */
 
 :root {
-    --main-spacing: 5vw;
-    --player-width: calc(100vw - calc(var(--main-spacing) * 2));
-    --pw-unit: calc(var(--player-width) / 4);
+    --main-spacing: 2vw;
+    --player-width: calc(calc(100vw - calc(var(--main-spacing) * 3)) / 2);
+    --player-fr: calc(var(--player-width) / 4);
 
-    --tally-buffer: calc(var(--pw-unit) * 1);
+    --sidebar-width: calc(var(--player-fr) * 1);
     --tally-spacing: 1vw;
-    --ship-cell: calc(calc(var(--tally-buffer) - calc(var(--tally-spacing) * 2)) / 5);
+    --ship-cell: calc(calc(var(--sidebar-width) - calc(var(--tally-spacing) * 2)) / 10);
 
-    --board: calc(var(--pw-unit) * 3);
-    --board-cell: calc(var(--board) / 10);
-
-    --tab-height: calc(var(--main-spacing) * 2);
-    --tab-width: calc(var(--tab-height) * 3);
-
-    --menu-width: calc(calc(100vw - calc(var(--main-spacing) * 2)) / 2);
-    --menu-cell: calc(var(--menu-width) / 5)
+    --board-width: calc(var(--player-fr) * 3);
+    --board-cell: calc(var(--board-width) / 10);
 }
 
 /* DISPLAY FLEX */
 
 body,
 main,
+#ship-content,
 .tally,
+#ship-menu,
 .ship,
 .board,
 .row,
-footer,
-#footer-content,
-#ship-menu,
-#controls {
+footer {
     display: flex;
 }
 
 body,
-main,
+#ship-content,
 .tally,
-.board,
-footer,
 #ship-menu,
-#controls {
+.board {
     flex-flow: column;
 }
 
@@ -53,12 +44,12 @@ footer,
 }
 
 #human {
-    grid-template-columns: var(--tally-buffer) var(--board);
+    grid-template-columns: var(--player-fr) calc(var(--player-fr) * 3);
     grid-template-areas: 'tally board';
 }
 
 #computer {
-    grid-template-columns: var(--board) var(--tally-buffer);
+    grid-template-columns: calc(var(--player-fr) * 3) var(--player-fr);
     grid-template-areas: 'board tally';
 }
 
@@ -71,101 +62,48 @@ footer,
     }
 
 /* POSITIONING */
-/* mobile */
 
-main,
-#ship-menu,
-#controls {
-    justify-content: space-between;
+main {
+    column-gap: var(--main-spacing);
 }
 
-    #human .tally .ship {
-        justify-content: flex-end;
+    .tally {
+        gap: calc(var(--tally-spacing) / 2);
     }
-
-footer {
-    position: absolute;
-    bottom: 0%;
-    left: 0%;
-}
-
-    #footer-tab,
-    #footer-content {
-        position: relative;
-        top: calc(var(--tab-height) * -1);
-    }
-
-    #footer-tab {
-        margin: 0px auto;
-    }
-
-        #controls {
-            flex-wrap: wrap;
-            align-content: center;
-        }
 
 /* SIZING */
-/* mobile */
 
 body {
     height: 100vh;
     width: 100vw;
-    padding: var(--main-spacing);
 }
 
     main {
-        height: 100vh;
+        padding: var(--main-spacing);
     }
 
-        #human,
-        #computer {
-            width: var(--player-width);
+        #human .tally {
+            padding-right: var(--tally-spacing);
         }
 
-            .tally {
-                padding: var(--tally-spacing);
-            }
-
-                .ship {
-                    height: auto;
-                    width: 100%;
-                }
-
-                .tally .ship span {
-                    height: var(--ship-cell);
-                    width: var(--ship-cell);
-                }
-
-            .cell {
-                height: var(--board-cell);
-                width: var(--board-cell);
-            }
-    
-    footer {
-        height: calc(100% - calc(var(--board-cell) * 10) - calc(var(--main-spacing) * 4));
-        width: 100%;
-    }
-
-        #footer-tab {
-            height: var(--tab-height);
-            width: var(--tab-width);
+        #computer .tally {
+            padding-left: var(--tally-spacing);
         }
 
-            #footer-content {
-                height: 100%;
-                margin-bottom: calc(var(--tab-height) * -1);
-                padding: var(--main-spacing);
+            .ship {
+                height: auto;
+                width: 100%;
             }
 
-                #ship-menu,
-                #controls {
-                    width: 50%;
-                }
+            .tally .ship span {
+                height: var(--ship-cell);
+                width: var(--ship-cell);
+            }
 
-                    #ship-menu .ship span {
-                        height: var(--menu-cell);
-                        width: var(--menu-cell);
-                    }
+        .cell {
+            height: var(--board-cell);
+            width: var(--board-cell);
+        }
 
 /* COLORS */
 
@@ -182,7 +120,6 @@ body {
     border: green 1px solid; /* ! testing */
 }
 
-#footer-tab,
-#footer-content {
+footer {
     background-color: rgba(255, 166, 0.3);   /* ! testing */
 }
