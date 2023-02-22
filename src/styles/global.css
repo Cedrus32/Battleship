@@ -151,18 +151,22 @@ body {
 
 /* COLORS */
 
-#human,
-#computer {
-    background-color: rgba(255, 0, 0, 1);  /* ! testing */
+main {
+    background-color: white;
 }
 
-.ship span {
-    background-color: blue;
-}
+    #human,
+    #computer {
+        background-color: rgba(255, 0, 0, 0.3);  /* ! testing */
+    }
 
-.cell {
-    border: green 1px solid; /* ! testing */
-}
+        .ship span {
+            background-color: blue;
+        }
+
+        .cell {
+            border: green 1px solid; /* ! testing */
+        }
 
 #alert {
     background-color: rgba(128, 0, 128, 0.3);
