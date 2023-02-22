@@ -13,6 +13,10 @@
     --board-cell: calc(var(--board-width) / 10);
 }
 
+.hide {
+    z-index: -1;
+}
+
 /* DISPLAY FLEX */
 
 body,
@@ -23,6 +27,7 @@ main,
 .ship,
 .board,
 .row,
+#alert,
 footer {
     display: flex;
 }
@@ -31,7 +36,8 @@ body,
 #ship-content,
 .tally,
 #ship-menu,
-.board {
+.board,
+#alert {
     flex-flow: column;
 }
 
@@ -63,30 +69,41 @@ body,
 
 /* POSITIONING */
 
-main {
-    gap: var(--main-spacing);
+body {
+    justify-content: center;
+    align-items: center;
 }
 
-    #ship-content {
+    main {
         gap: var(--main-spacing);
     }
 
-        .tally {
-            gap: calc(var(--tally-spacing) / 2);
+        #ship-content {
+            gap: var(--main-spacing);
         }
 
-        #ship-menu {
-            gap: var(--tally-spacing);
-        }
+            .tally {
+                gap: calc(var(--tally-spacing) / 2);
+            }
 
-footer {
-    justify-content: center;
-}
+            #ship-menu {
+                gap: var(--tally-spacing);
+            }
+
+    #alert {
+        position: absolute;
+        align-items: center;
+        gap: var(--main-spacing);
+    }
+
+    footer {
+        justify-content: center;
+    }
 
 /* SIZING */
 
 body {
-    height: 100vh;
+    height: auto;
     width: 100vw;
 }
 
@@ -122,11 +139,21 @@ body {
             width: var(--board-cell);
         }
 
+    #alert {
+        min-width: max-content;
+        width: 25vw;
+        padding: var(--main-spacing);
+    }
+
+    footer {
+        width: 100%;
+    }
+
 /* COLORS */
 
 #human,
 #computer {
-    background-color: rgba(255, 0, 0, 0.3);  /* ! testing */
+    background-color: rgba(255, 0, 0, 1);  /* ! testing */
 }
 
 .ship span {
@@ -135,6 +162,10 @@ body {
 
 .cell {
     border: green 1px solid; /* ! testing */
+}
+
+#alert {
+    background-color: rgba(128, 0, 128, 0.3);
 }
 
 footer {
