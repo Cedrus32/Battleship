@@ -5,11 +5,19 @@ import iconsArray from './icons.js';
 const ui = (() => {
     let playerBoards = [document.getElementById('human').lastElementChild, document.getElementById('computer').lastElementChild];
     let shipContainers = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
-    let footer = document.querySelector('footer');
+    let body = document.querySelector('body');
 
     // ! adjust container value, and include class/id to create both menu & tally containers depending on state
 
     // event listeners
+    body.addEventListener('click', (e) => {
+        if (e.target.id === 'play') {
+            play();
+        }
+        if (e.target.id === 'restart') {
+            console.log('restart switch');
+        }
+    })
 
     // driver methods
     function init() {
@@ -24,6 +32,7 @@ const ui = (() => {
     function play() {
         let i = 0;
         while (i < shipContainers.length) {
+            console.log(i);
             clearShipContainer(shipContainers[i]);
             setSectionType(shipContainers[i], 'tally');
             generateShipTallies(shipContainers[i], i);
@@ -85,6 +94,12 @@ const ui = (() => {
                 cellContainer.append(cell);
             }
             container.append(cellContainer);
+        }
+    }
+    function clearShipContainer(container) {
+        console.log(container);
+        while (container.lastElementChild) {
+            container.removeChild(container.lastElementChild);
         }
     }
 
