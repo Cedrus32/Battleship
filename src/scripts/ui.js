@@ -4,19 +4,31 @@ import iconsArray from './icons.js';
 
 const ui = (() => {
     let playerBoards = [document.getElementById('human').lastElementChild, document.getElementById('computer').lastElementChild];
-    let shipTallies = [document.getElementById('human').firstElementChild.firstElementChild, document.getElementById('computer').firstElementChild];
-    let shipMenu = document.getElementById('human').firstElementChild.lastElementChild;
+    let shipContainers = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
     let footer = document.querySelector('footer');
 
-    // driver method
+    // ! adjust container value, and include class/id to create both menu & tally containers depending on state
+
+    // event listeners
+
+    // driver methods
     function init() {
         let i = 0;
         while (i < playerBoards.length) {
             generateGrid(playerBoards[i]);
-            generateShipTallies(shipTallies[i], i);
             i++;
         }
+        setSectionType(shipContainers[0], 'menu');
         generateShipMenu();
+    }
+    function play() {
+        let i = 0;
+        while (i < shipContainers.length) {
+            clearShipContainer(shipContainers[i]);
+            setSectionType(shipContainers[i], 'tally');
+            generateShipTallies(shipContainers[i], i);
+            i++;
+        }
     }
 
     // helper methods
@@ -34,6 +46,15 @@ const ui = (() => {
             i++;
         }
     }
+    function setSectionType(section, selector) {
+        if (section.classList.length > 0) {
+            section.classList = '';
+        }
+        section.classList.add(selector);
+    }
+    function generateShipMenu() {
+        makeShipIcons('', shipContainers[0]);
+    }
     function generateShipTallies(tallyContainer, index) {
         let playerType;
         if (index === 0) {
@@ -42,9 +63,6 @@ const ui = (() => {
             playerType = 'c';
         }
         makeShipIcons(playerType, tallyContainer);
-    }
-    function generateShipMenu() {
-        makeShipIcons('', shipMenu);
     }
     function makeShipIcons(playerType, container) {
         let ships = [[5, '.ship', 'acc'],

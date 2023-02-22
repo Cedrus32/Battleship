@@ -21,9 +21,9 @@
 
 body,
 main,
-#ship-content,
+.menu,
 .tally,
-#ship-menu,
+.ship-menu,
 .ship,
 .board,
 .row,
@@ -33,9 +33,9 @@ footer {
 }
 
 body,
-#ship-content,
+.menu,
 .tally,
-#ship-menu,
+.ship-menu,
 .board,
 #alert {
     flex-flow: column;
@@ -78,7 +78,7 @@ body {
         gap: var(--main-spacing);
     }
 
-        #ship-content {
+        .menu {
             gap: var(--main-spacing);
         }
 
@@ -86,7 +86,7 @@ body {
                 gap: calc(var(--tally-spacing) / 2);
             }
 
-            #ship-menu {
+            .menu {
                 gap: var(--tally-spacing);
             }
 
@@ -129,7 +129,7 @@ body {
                 width: calc(var(--ship-cell) / 2);
             }
 
-            #ship-menu .ship span {
+            .menu .ship span {
                 height: var(--ship-cell);
                 width: var(--ship-cell);
             }
