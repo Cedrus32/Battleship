@@ -156,7 +156,7 @@ const ui = (() => {
         }
     }
     function addCellHover(isValid) {
-        console.log(isValid);
+        // console.log(isValid);
         for (let i = 0; i < boardCells.length; i++) {
             if (boardCells[i].length <= 2) {
                 let cell = document.getElementById(boardCells[i]);

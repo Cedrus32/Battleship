@@ -71,7 +71,7 @@ class Gameboard {
     setIsValid(coordSet) {
         for (let i = 0; i < coordSet.length; i++) {
             if (coordSet[i].length > 2) {
-                console.log('coord out of bounds');
+                // console.log('coord out of bounds');
                 return false;
             }
             let newX = parseInt(coordSet[i].split('')[0]);
