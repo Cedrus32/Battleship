@@ -7,6 +7,9 @@ const ui = (() => {
     let shipContainers = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
     let body = document.querySelector('body');
 
+    let state;
+    let selectedShip;
+
     // ! adjust container value, and include class/id to create both menu & tally containers depending on state
 
     // event listeners
@@ -17,10 +20,18 @@ const ui = (() => {
         if (e.target.id === 'restart') {
             console.log('restart switch');
         }
-    })
+        if (e.target.parentElement.classList.contains('ship') && state === 'setup') {
+            if (selectedShip !== undefined) {
+                removeMenuSelect(selectedShip);
+            }
+            selectedShip = e.target.parentElement;
+            addMenuSelect(selectedShip);
+        }
+    });
 
     // driver methods
     function init() {
+        state = 'setup';
         let i = 0;
         while (i < playerBoards.length) {
             generateGrid(playerBoards[i]);
@@ -30,6 +41,7 @@ const ui = (() => {
         generateShipMenu();
     }
     function play() {
+        state = 'play';
         let i = 0;
         while (i < shipContainers.length) {
             console.log(i);
@@ -40,7 +52,7 @@ const ui = (() => {
         }
     }
 
-    // helper methods
+    // generative methods
     function generateGrid(board) {
         let i = 0;
         while (i < 10) {
@@ -101,6 +113,16 @@ const ui = (() => {
         while (container.lastElementChild) {
             container.removeChild(container.lastElementChild);
         }
+    }
+
+    // placement methods
+    function removeMenuSelect(ship) {
+        console.log(ship);
+        ship.classList.remove('selected');
+    }
+    function addMenuSelect(ship) {
+        console.log(ship);
+        ship.classList.add('selected');
     }
 
     return {

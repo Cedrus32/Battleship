@@ -160,8 +160,17 @@ main {
         background-color: rgba(255, 0, 0, 0.3);  /* ! testing */
     }
 
-        .ship div {
+        .ship {
             background-color: blue;
+        }
+
+        .selected {
+            background-color: rgba(0, 0, 255, 0.5);
+        }
+
+        .placed {
+            background-color: none;
+            border: 1px solid grey;
         }
 
         .cell {
