@@ -9,7 +9,7 @@ const ui = (() => {
 
     let action; // ! move to board object?
     let selectedShip; // ! move to board object?
-    let boardCells; // ! move to board object?
+    let coordData; // ! move to board object?
     let direction = 'h';    // ! move to board object?
 
     // event listeners
@@ -20,11 +20,11 @@ const ui = (() => {
         if (e.target.id === 'restart') {
             // restart();
         }
-        if (e.target.parentElement.classList.contains('ship') && shipContainers[0].classList.contains('menu')) {
+        if (e.target.parentElement.classList.contains('ship') && !e.target.parentElement.classList.contains('placed') && shipContainers[0].classList.contains('menu')) {
             setMenuSelect(e.target.parentElement);
         }
-        if (e.target.classList.contains('cell')) {
-            // setPlacementStyling()
+        if (e.target.classList.contains('cell') && action === 'placing' && coordData[1] === true) {
+            setPlacedStyles();
             // publish event -- makeShip
         }
     });
@@ -35,7 +35,7 @@ const ui = (() => {
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {
-        if (action === 'placing' && boardCells !== undefined) {
+        if (action === 'placing' && coordData !== undefined) {
             removeCellHover();
         }
     })
@@ -150,20 +150,20 @@ const ui = (() => {
     }
     function setBoardHover(coordSet, isValid) {
         // console.log('pass to setBoardHover:', coordSet, isValid);
-        if (boardCells === undefined) {
-            boardCells = coordSet;
-            addCellHover(isValid);
+        if (coordData === undefined) {
+            coordData = [coordSet, isValid];
+            addCellHover(coordData[1]);
         } else {
-            removeCellHover(coordSet);
-            boardCells = coordSet;
-            addCellHover(isValid);
+            removeCellHover();
+            coordData = [coordSet, isValid];
+            addCellHover(coordData[1]);
         }
     }
     function addCellHover(isValid) {
         // console.log(isValid);
-        for (let i = 0; i < boardCells.length; i++) {
-            if (boardCells[i].length <= 2) {
-                let cell = document.getElementById(boardCells[i]);
+        for (let i = 0; i < coordData[0].length; i++) {
+            if (coordData[0][i].length <= 2) {
+                let cell = document.getElementById(coordData[0][i]);
                 cell.classList.add('hover');
                 if (isValid === true) {
                     cell.classList.add('is-valid');
@@ -174,15 +174,27 @@ const ui = (() => {
         }
     }
     function removeCellHover() {
-        for (let i = 0; i < boardCells.length; i++) {
-            if (boardCells[i].length <= 2) {
-                let cell = document.getElementById(boardCells[i]);
-                cell.classList = 'cell';
+        for (let i = 0; i < coordData[0].length; i++) {
+            if (coordData[0][i].length <= 2) {
+                let cell = document.getElementById(coordData[0][i]);
+                if (cell.classList.contains('placed')) {
+                    cell.classList = 'cell placed';
+                } else {
+                    cell.classList = 'cell';
+                }
             }
         }
     }
-    function setShipPlacement() {
-        
+    function setPlacedStyles() {
+        selectedShip.classList = 'ship placed';
+        for (let i = 0; i < coordData[0].length; i++) {
+            let cell = document.getElementById(coordData[0][i]);
+            console.log(cell);
+            cell.classList = 'cell';
+            cell.classList.add('placed');
+        }
+        selectedShip = undefined;
+        coordData = undefined;
     }
 
     // event subscriptions

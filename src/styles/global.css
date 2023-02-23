@@ -160,27 +160,27 @@ main {
         background-color: rgba(255, 0, 0, 0.3);  /* ! testing */
     }
 
-        .ship {
+        .ship,
+        .cell.placed {
             background-color: blue;
         }
 
-            .selected,
-            .hover.is-valid {
-                background-color: rgba(0, 0, 255, 0.5);
-            }
+        .selected,
+        .hover.is-valid {
+            background-color: rgba(0, 0, 255, 0.5);
+        }
 
-            .placed {
-                background-color: none;
-                border: 1px solid grey;
-            }
+        .hover.is-invalid {
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .ship.placed {
+            background-color: rgba(128, 128, 128, 0.5);
+        }
 
         .cell {
             border: green 1px solid; /* ! testing */
         }
-
-            .hover.is-invalid {
-                background-color: rgba(255, 0, 0, 0.5);
-            }
 
 #alert {
     background-color: rgba(128, 0, 128, 0.3);
