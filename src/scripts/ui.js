@@ -74,23 +74,23 @@ const ui = (() => {
         makeShipIcons(playerType, tallyContainer);
     }
     function makeShipIcons(playerType, container) {
-        let ships = [[5, '.ship', 'acc'],
-                     [4, '.ship', 'bs'],
-                     [3, '.ship', 'crus'],
-                     [2, '.ship', 'dest1'],
-                     [2, '.ship', 'dest2'],
-                     [1, '.ship', 'sub1'],
-                     [1, '.ship', 'sub2']
+        let ships = [[5, 'acc'],
+                     [4, 'bs'],
+                     [3, 'crus'],
+                     [2, 'dest1'],
+                     [2, 'dest2'],
+                     [1, 'sub1'],
+                     [1, 'sub2']
                     ];
         for (let i = 0; i < ships.length; i++) {
             let cellContainer;
             if (playerType === '') {
-                cellContainer = create.div('', ships[i][1], `#${ships[i][2]}`);
+                cellContainer = create.div('', '.ship', `#${ships[i][0]}-${ships[i][1]}`);
             } else {
-                cellContainer = create.div('', ships[i][1], `#${playerType}-${ships[i][2]}`);
+                cellContainer = create.div('', '.ship', `#${playerType}-${ships[i][1]}`);
             }
             for (let j = 0; j < ships[i][0]; j++) {
-                let cell = create.span('');
+                let cell = create.div('', false);
                 cellContainer.append(cell);
             }
             container.append(cellContainer);

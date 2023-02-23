@@ -2,15 +2,15 @@
 
 :root {
     --main-spacing: 2vw;
-    --player-width: calc(calc(100vw - calc(var(--main-spacing) * 3)) / 2);
-    --player-fr: calc(var(--player-width) / 4);
+    --player-area: calc(calc(100vw - calc(var(--main-spacing) * 4)) / 2);
+    --player-fr: calc(var(--player-area) / 15);
 
-    --sidebar-width: calc(var(--player-fr) * 1);
-    --tally-spacing: 1vw;
-    --ship-cell: calc(calc(var(--sidebar-width) - calc(var(--tally-spacing) * 2)) / 5);
+    --sidebar-spacing: calc(var(--main-spacing) / 2);
+    --sidebar-area: calc(var(--sidebar-spacing) + calc(var(--player-fr) * 5));
+    --ship-cell: var(--player-fr);
 
-    --board-width: calc(var(--player-fr) * 3);
-    --board-cell: calc(var(--board-width) / 10);
+    --board-area: calc(var(--player-fr) * 10);
+    --board-cell: var(--player-fr);
 }
 
 .hide {
@@ -23,7 +23,6 @@ body,
 main,
 .menu,
 .tally,
-.ship-menu,
 .ship,
 .board,
 .row,
@@ -35,7 +34,6 @@ footer {
 body,
 .menu,
 .tally,
-.ship-menu,
 .board,
 #alert {
     flex-flow: column;
@@ -50,17 +48,21 @@ body,
 }
 
 #human {
-    grid-template-columns: var(--player-fr) calc(var(--player-fr) * 3);
-    grid-template-areas: 'tally board';
+    grid-template-columns: var(--sidebar-area) var(--board-area);
+    grid-template-areas: 'sidebar board';
 }
 
 #computer {
-    grid-template-columns: calc(var(--player-fr) * 3) var(--player-fr);
-    grid-template-areas: 'board tally';
+    grid-template-columns: var(--board-area) var(--sidebar-area);
+    grid-template-areas: 'board sidebar';
 }
 
+    .menu {
+        grid-area: sidebar;
+    }
+
     .tally {
-        grid-area: tally;
+        grid-area: sidebar;
     }
 
     .board {
@@ -79,16 +81,12 @@ body {
     }
 
         .menu {
-            gap: var(--main-spacing);
+            gap: var(--sidebar-spacing);
         }
 
-            .tally {
-                gap: calc(var(--tally-spacing) / 2);
-            }
-
-            .menu {
-                gap: var(--tally-spacing);
-            }
+        .tally {
+            gap: calc(var(--sidebar-spacing) / 2);
+        }
 
     #alert {
         position: absolute;
@@ -111,28 +109,30 @@ body {
         padding: var(--main-spacing);
     }
 
+        .menu,
         #human .tally {
-            padding-right: var(--tally-spacing);
+            padding-right: var(--sidebar-spacing);
         }
 
         #computer .tally {
-            padding-left: var(--tally-spacing);
+            padding-left: var(--sidebar-spacing);
         }
 
             .ship {
                 height: auto;
-                width: 100%;
+                width: max-content;
             }
 
-            .tally .ship span {
-                height: calc(var(--ship-cell) / 2);
-                width: calc(var(--ship-cell) / 2);
-            }
+                .menu .ship div,
+                .cell .ship div {
+                    height: var(--ship-cell);
+                    width: var(--ship-cell);
+                }
 
-            .menu .ship span {
-                height: var(--ship-cell);
-                width: var(--ship-cell);
-            }
+                .tally .ship div {
+                    height: calc(var(--ship-cell) / 2);
+                    width: calc(var(--ship-cell) / 2);
+                }
 
         .cell {
             height: var(--board-cell);
@@ -160,7 +160,7 @@ main {
         background-color: rgba(255, 0, 0, 0.3);  /* ! testing */
     }
 
-        .ship span {
+        .ship div {
             background-color: blue;
         }
 
