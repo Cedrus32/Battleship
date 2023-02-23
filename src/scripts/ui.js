@@ -7,10 +7,10 @@ const ui = (() => {
     let shipContainers = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
     let body = document.querySelector('body');
 
-    let action;
-    let selectedShip;
-    let boardCells;
-    let direction = 'h';
+    let action; // ! move to board object?
+    let selectedShip; // ! move to board object?
+    let boardCells; // ! move to board object?
+    let direction = 'h';    // ! move to board object?
 
     // event listeners
     body.addEventListener('click', (e) => {
@@ -22,6 +22,10 @@ const ui = (() => {
         }
         if (e.target.parentElement.classList.contains('ship') && shipContainers[0].classList.contains('menu')) {
             setMenuSelect(e.target.parentElement);
+        }
+        if (e.target.classList.contains('cell')) {
+            // setPlacementStyling()
+            // publish event -- makeShip
         }
     });
     playerBoards[0].addEventListener('mouseover', (e) => {
@@ -176,6 +180,9 @@ const ui = (() => {
                 cell.classList = 'cell';
             }
         }
+    }
+    function setShipPlacement() {
+        
     }
 
     // event subscriptions
