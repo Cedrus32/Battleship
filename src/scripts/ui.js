@@ -7,10 +7,10 @@ const ui = (() => {
     let shipContainers = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
     let body = document.querySelector('body');
 
-    let state;
+    let action;
     let selectedShip;
-
-    // ! adjust container value, and include class/id to create both menu & tally containers depending on state
+    let boardCells;
+    let direction = 'h';
 
     // event listeners
     body.addEventListener('click', (e) => {
@@ -18,20 +18,26 @@ const ui = (() => {
             play();
         }
         if (e.target.id === 'restart') {
-            console.log('restart switch');
+            // restart();
         }
-        if (e.target.parentElement.classList.contains('ship') && state === 'setup') {
-            if (selectedShip !== undefined) {
-                removeMenuSelect(selectedShip);
-            }
-            selectedShip = e.target.parentElement;
-            addMenuSelect(selectedShip);
+        if (e.target.parentElement.classList.contains('ship') && shipContainers[0].classList.contains('menu')) {
+            setMenuSelect(e.target.parentElement);
         }
     });
+    playerBoards[0].addEventListener('mouseover', (e) => {
+        if (action === 'placing') {
+            // console.log('publish queryIDArray:', e.target.id, direction, selectedShip.id.slice(0, 1));
+            events.publish('queryIDArray', e.target.id, direction, selectedShip.id.slice(0, 1)); // subscribed by game.js
+        }
+    });
+    playerBoards[0].addEventListener('mouseleave', () => {
+        if (action === 'placing' && boardCells !== undefined) {
+            removeCellHover();
+        }
+    })
 
     // driver methods
     function init() {
-        state = 'setup';
         let i = 0;
         while (i < playerBoards.length) {
             generateGrid(playerBoards[i]);
@@ -41,7 +47,6 @@ const ui = (() => {
         generateShipMenu();
     }
     function play() {
-        state = 'play';
         let i = 0;
         while (i < shipContainers.length) {
             console.log(i);
@@ -116,14 +121,61 @@ const ui = (() => {
     }
 
     // placement methods
-    function removeMenuSelect(ship) {
-        console.log(ship);
-        ship.classList.remove('selected');
+    function setMenuSelect(targetShip) {
+        if (selectedShip === undefined) {
+            action = 'placing';
+            selectedShip = targetShip;
+            addMenuSelect(selectedShip);
+        } else {
+            if (targetShip === selectedShip) {
+                removeMenuSelect(selectedShip);
+                action = undefined;
+                selectedShip = undefined;
+            } else if (targetShip !== selectedShip) {
+                removeMenuSelect(selectedShip);
+                selectedShip = targetShip;
+                addMenuSelect(selectedShip);
+            }   
+        }
     }
     function addMenuSelect(ship) {
-        console.log(ship);
         ship.classList.add('selected');
     }
+    function removeMenuSelect(ship) {
+        ship.classList.remove('selected');
+    }
+    function setBoardHover(coordSet, isValid) {
+        // console.log('pass to setBoardHover:', coordSet, isValid);
+        if (boardCells === undefined) {
+            boardCells = coordSet;
+            addCellHover(isValid);
+        } else {
+            removeCellHover(coordSet);
+            boardCells = coordSet;
+            addCellHover(isValid);
+        }
+    }
+    function addCellHover(isValid) {
+        console.log(isValid);
+        for (let i = 0; i < boardCells.length; i++) {
+            let cell = document.getElementById(boardCells[i]);
+            cell.classList.add('hover');
+            if (isValid === true) {
+                cell.classList.add('is-valid');
+            } else if (isValid === false) {
+                cell.classList.add('is-invalid');
+            }
+        }
+    }
+    function removeCellHover() {
+        for (let i = 0; i < boardCells.length; i++) {
+            let cell = document.getElementById(boardCells[i]);
+            cell.classList = 'cell';
+        }
+    }
+
+    // event subscriptions
+    events.subscribe('receiveIDArray', setBoardHover); // published by game.js (getCoordsFromHuman)
 
     return {
         init, // used by index.js
