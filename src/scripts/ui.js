@@ -158,19 +158,23 @@ const ui = (() => {
     function addCellHover(isValid) {
         console.log(isValid);
         for (let i = 0; i < boardCells.length; i++) {
-            let cell = document.getElementById(boardCells[i]);
-            cell.classList.add('hover');
-            if (isValid === true) {
-                cell.classList.add('is-valid');
-            } else if (isValid === false) {
-                cell.classList.add('is-invalid');
+            if (boardCells[i].length <= 2) {
+                let cell = document.getElementById(boardCells[i]);
+                cell.classList.add('hover');
+                if (isValid === true) {
+                    cell.classList.add('is-valid');
+                } else if (isValid === false) {
+                    cell.classList.add('is-invalid');
+                }
             }
         }
     }
     function removeCellHover() {
         for (let i = 0; i < boardCells.length; i++) {
-            let cell = document.getElementById(boardCells[i]);
-            cell.classList = 'cell';
+            if (boardCells[i].length <= 2) {
+                let cell = document.getElementById(boardCells[i]);
+                cell.classList = 'cell';
+            }
         }
     }
 
