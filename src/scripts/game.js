@@ -7,21 +7,21 @@ const game = (() => {
 
     function init() {
         human = makePlayer('human');
-        computer = makePlayer('computer');
-        console.log(human);
-        console.log(computer);    
+        computer = makePlayer('computer');  
     }
 
     function getCoordsFromHuman(startCoord, direction, length) {
-        // console.log('pass to getCoordsFromHuman:', startCoord, direction, length);
         let coordSet = human.board.getCoords(startCoord, direction, length);
         let isValid = human.board.setIsValid(coordSet);
-        // console.log('getCoordsFromHuman:', coordSet, isValid);
         events.publish('receiveIDArray', coordSet, isValid); // subscribed by ui.js
+    }
+    function placeShip(startCoord, direction, length) {
+        human.board.placeShip(startCoord, direction, length);
     }
 
     // event subscriptions
     events.subscribe('queryIDArray', getCoordsFromHuman); // published by ui.js (playerBoards[0].onMouseOver)
+    events.subscribe('placeShip', placeShip); // published by ui.js (body.onClick)
 
     return {
         init, // used by index.js

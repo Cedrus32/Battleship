@@ -26,14 +26,12 @@ const ui = (() => {
             setMenuSelect(e.target.parentElement);
         }
         if (e.target.classList.contains('cell') && state.action === 'placing' && state.coordData[1] === true) {
-            events
-            setPlacedStyles();
-            // publish event -- makeShip
+            events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.slice(0, 1));
+            placeShipUI();
         }
     });
     playerBoards[0].addEventListener('mouseover', (e) => {
         if (state.action === 'placing') {
-            // console.log('publish queryIDArray:', e.target.id, direction, selectedShip.id.slice(0, 1));
             events.publish('queryIDArray', e.target.id, state.direction, state.selectedShip.id.slice(0, 1)); // subscribed by game.js
         }
     });
@@ -56,7 +54,6 @@ const ui = (() => {
     function play() {
         let i = 0;
         while (i < shipContainers.length) {
-            console.log(i);
             clearShipContainer(shipContainers[i]);
             setSectionType(shipContainers[i], 'tally');
             generateShipTallies(shipContainers[i], i);
@@ -121,7 +118,6 @@ const ui = (() => {
         }
     }
     function clearShipContainer(container) {
-        console.log(container);
         while (container.lastElementChild) {
             container.removeChild(container.lastElementChild);
         }
@@ -152,7 +148,6 @@ const ui = (() => {
         ship.classList.remove('selected');
     }
     function setBoardHover(coordSet, isValid) {
-        // console.log('pass to setBoardHover:', coordSet, isValid);
         if (state.coordData === undefined) {
             state.coordData = [coordSet, isValid];
             addCellHover(state.coordData[1]);
@@ -163,7 +158,6 @@ const ui = (() => {
         }
     }
     function addCellHover(isValid) {
-        // console.log(isValid);
         for (let i = 0; i < state.coordData[0].length; i++) {
             if (state.coordData[0][i].length <= 2) {
                 let cell = document.getElementById(state.coordData[0][i]);
@@ -188,14 +182,14 @@ const ui = (() => {
             }
         }
     }
-    function setPlacedStyles() {
+    function placeShipUI() {
         state.selectedShip.classList = 'ship placed';
         for (let i = 0; i < state.coordData[0].length; i++) {
             let cell = document.getElementById(state.coordData[0][i]);
-            console.log(cell);
             cell.classList = 'cell';
             cell.classList.add('placed');
         }
+        state.action = undefined;
         state.selectedShip = undefined;
         state.coordData = undefined;
     }
