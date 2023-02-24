@@ -7,10 +7,12 @@ const ui = (() => {
     let shipContainers = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
     let body = document.querySelector('body');
 
-    let action; // ! move to board object?
-    let selectedShip; // ! move to board object?
-    let coordData; // ! move to board object?
-    let direction = 'h';    // ! move to board object?
+    let state = {
+        action: undefined,
+        selectedShip: undefined,
+        coordData: undefined,
+        direction: 'h'
+    }
 
     // event listeners
     body.addEventListener('click', (e) => {
@@ -23,19 +25,20 @@ const ui = (() => {
         if (e.target.parentElement.classList.contains('ship') && !e.target.parentElement.classList.contains('placed') && shipContainers[0].classList.contains('menu')) {
             setMenuSelect(e.target.parentElement);
         }
-        if (e.target.classList.contains('cell') && action === 'placing' && coordData[1] === true) {
+        if (e.target.classList.contains('cell') && state.action === 'placing' && state.coordData[1] === true) {
+            events
             setPlacedStyles();
             // publish event -- makeShip
         }
     });
     playerBoards[0].addEventListener('mouseover', (e) => {
-        if (action === 'placing') {
+        if (state.action === 'placing') {
             // console.log('publish queryIDArray:', e.target.id, direction, selectedShip.id.slice(0, 1));
-            events.publish('queryIDArray', e.target.id, direction, selectedShip.id.slice(0, 1)); // subscribed by game.js
+            events.publish('queryIDArray', e.target.id, state.direction, state.selectedShip.id.slice(0, 1)); // subscribed by game.js
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {
-        if (action === 'placing' && coordData !== undefined) {
+        if (state.action === 'placing' && state.coordData !== undefined) {
             removeCellHover();
         }
     })
@@ -126,19 +129,19 @@ const ui = (() => {
 
     // placement methods
     function setMenuSelect(targetShip) {
-        if (selectedShip === undefined) {
-            action = 'placing';
-            selectedShip = targetShip;
-            addMenuSelect(selectedShip);
+        if (state.selectedShip === undefined) {
+            state.action = 'placing';
+            state.selectedShip = targetShip;
+            addMenuSelect(state.selectedShip);
         } else {
-            if (targetShip === selectedShip) {
-                removeMenuSelect(selectedShip);
-                action = undefined;
-                selectedShip = undefined;
-            } else if (targetShip !== selectedShip) {
-                removeMenuSelect(selectedShip);
-                selectedShip = targetShip;
-                addMenuSelect(selectedShip);
+            if (targetShip === state.selectedShip) {
+                removeMenuSelect(state.selectedShip);
+                state.action = undefined;
+                state.selectedShip = undefined;
+            } else if (targetShip !== state.selectedShip) {
+                removeMenuSelect(state.selectedShip);
+                state.selectedShip = targetShip;
+                addMenuSelect(state.selectedShip);
             }   
         }
     }
@@ -150,20 +153,20 @@ const ui = (() => {
     }
     function setBoardHover(coordSet, isValid) {
         // console.log('pass to setBoardHover:', coordSet, isValid);
-        if (coordData === undefined) {
-            coordData = [coordSet, isValid];
-            addCellHover(coordData[1]);
+        if (state.coordData === undefined) {
+            state.coordData = [coordSet, isValid];
+            addCellHover(state.coordData[1]);
         } else {
             removeCellHover();
-            coordData = [coordSet, isValid];
-            addCellHover(coordData[1]);
+            state.coordData = [coordSet, isValid];
+            addCellHover(state.coordData[1]);
         }
     }
     function addCellHover(isValid) {
         // console.log(isValid);
-        for (let i = 0; i < coordData[0].length; i++) {
-            if (coordData[0][i].length <= 2) {
-                let cell = document.getElementById(coordData[0][i]);
+        for (let i = 0; i < state.coordData[0].length; i++) {
+            if (state.coordData[0][i].length <= 2) {
+                let cell = document.getElementById(state.coordData[0][i]);
                 cell.classList.add('hover');
                 if (isValid === true) {
                     cell.classList.add('is-valid');
@@ -174,9 +177,9 @@ const ui = (() => {
         }
     }
     function removeCellHover() {
-        for (let i = 0; i < coordData[0].length; i++) {
-            if (coordData[0][i].length <= 2) {
-                let cell = document.getElementById(coordData[0][i]);
+        for (let i = 0; i < state.coordData[0].length; i++) {
+            if (state.coordData[0][i].length <= 2) {
+                let cell = document.getElementById(state.coordData[0][i]);
                 if (cell.classList.contains('placed')) {
                     cell.classList = 'cell placed';
                 } else {
@@ -186,15 +189,15 @@ const ui = (() => {
         }
     }
     function setPlacedStyles() {
-        selectedShip.classList = 'ship placed';
-        for (let i = 0; i < coordData[0].length; i++) {
-            let cell = document.getElementById(coordData[0][i]);
+        state.selectedShip.classList = 'ship placed';
+        for (let i = 0; i < state.coordData[0].length; i++) {
+            let cell = document.getElementById(state.coordData[0][i]);
             console.log(cell);
             cell.classList = 'cell';
             cell.classList.add('placed');
         }
-        selectedShip = undefined;
-        coordData = undefined;
+        state.selectedShip = undefined;
+        state.coordData = undefined;
     }
 
     // event subscriptions
