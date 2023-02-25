@@ -27,23 +27,23 @@ const ui = (() => {
             setMenuSelect(e.target.parentElement);
         }
         if (e.target.classList.contains('cell')) {
-            if (state.placing === false && state.replacing === false && e.target.classList.contains('placed')) {
+            if (!state.placing && !state.replacing && e.target.classList.contains('placed')) {
                 state.replacing = true;
                 events.publish('queryShipData', e.target.classList[2]); // subscribed by game.js
             }
-            if (state.placing === true && state.coordData[1] === true) {
+            if (state.placing && state.coordData[1]) {
                 events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]);
                 placeShipUI();
             }
         }
     });
     playerBoards[0].addEventListener('mouseover', (e) => {
-        if (state.placing === true || state.replacing === true) {
+        if (state.placing || state.replacing) {
             events.publish('queryCoordData', e.target.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {
-        if (state.placing === true || state.replacing === true) {
+        if (state.placing || state.replacing) {
             removeCellHover();
         }
     })
@@ -164,9 +164,9 @@ const ui = (() => {
             if (state.coordData[0][i].length <= 2) {
                 let cell = document.getElementById(state.coordData[0][i]);
                 cell.classList.add('hover');
-                if (isValid === true) {
+                if (isValid) {
                     cell.classList.add('is-valid');
-                } else if (isValid === false) {
+                } else if (!isValid) {
                     cell.classList.add('is-invalid');
                 }
             }
