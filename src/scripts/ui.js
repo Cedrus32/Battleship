@@ -30,6 +30,7 @@ const ui = (() => {
             if (!state.placing && !state.replacing && e.target.classList.contains('placed')) {
                 state.replacing = true;
                 events.publish('queryShipData', e.target.classList[2]); // subscribed by game.js
+                events.publish('removeShipData', state.selectedShip.id.split('-')[1]); // subscribed by game.js
             }
             if (state.placing && state.coordData[1]) {
                 events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]);

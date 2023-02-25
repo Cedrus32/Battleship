@@ -19,18 +19,19 @@ const game = (() => {
         human.board.placeShip(startCoord, direction, length, name);
     }
     function queryShipData(targetName) {
-        for (let i = 0; i < human.board.ships.length; i++) {
-            if (human.board.ships[i].name === targetName) {
-                let ship = human.board.ships[i];
-                events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
-            }
-        }
+        let ship = human.board.getShip(targetName);
+        events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
+    }
+    function removeShipData(targetName) {
+        console.log('enter removeShipData()...')
+        human.board.removeShip(targetName);
     }
 
     // event subscriptions
     events.subscribe('queryCoordData', queryCoordData); // published by ui.js (playerBoards[0].onMouseOver)
     events.subscribe('placeShip', placeShip); // published by ui.js (body.onClick)
     events.subscribe('queryShipData', queryShipData); // published by ui.js (body.onClick)
+    events.subscribe('removeShipData', removeShipData); // published by ui.js (body.onClick)
 
     return {
         init, // used by index.js
