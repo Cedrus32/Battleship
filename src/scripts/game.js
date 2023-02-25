@@ -10,18 +10,27 @@ const game = (() => {
         computer = makePlayer('computer');  
     }
 
-    function getCoordsFromHuman(startCoord, direction, length) {
+    function queryCoordData(startCoord, direction, length) {
         let coordSet = human.board.getCoords(startCoord, direction, length);
         let isValid = human.board.setIsValid(coordSet);
-        events.publish('receiveIDArray', coordSet, isValid); // subscribed by ui.js
+        events.publish('receiveCoordData', coordSet, isValid); // subscribed by ui.js
     }
-    function placeShip(startCoord, direction, length) {
-        human.board.placeShip(startCoord, direction, length);
+    function placeShip(startCoord, direction, length, name) {
+        human.board.placeShip(startCoord, direction, length, name);
+    }
+    function queryShipData(targetName) {
+        for (let i = 0; i < human.board.ships.length; i++) {
+            if (human.board.ships[i].name === targetName) {
+                let ship = human.board.ships[i];
+                events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
+            }
+        }
     }
 
     // event subscriptions
-    events.subscribe('queryIDArray', getCoordsFromHuman); // published by ui.js (playerBoards[0].onMouseOver)
+    events.subscribe('queryCoordData', queryCoordData); // published by ui.js (playerBoards[0].onMouseOver)
     events.subscribe('placeShip', placeShip); // published by ui.js (body.onClick)
+    events.subscribe('queryShipData', queryShipData); // published by ui.js (body.onClick)
 
     return {
         init, // used by index.js

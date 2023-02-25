@@ -1,7 +1,8 @@
 // CLASSES
 class Ship {
-    constructor(length = null, coords = null) {
+    constructor(length = null, name = null, coords = null) {
         this.length = length;
+        this.name = name;
         this.hits = 0;
         this.sunk = false;
         this.coords = coords;
@@ -36,10 +37,10 @@ class Gameboard {
         this.shipsSunk = 0;
     }
 
-    placeShip(startCoord, dir, shipLen) {
+    placeShip(startCoord, dir, shipLen, shipName) {
         let coordSet = this.getCoords(startCoord, dir, shipLen);
         if (this.setIsValid(coordSet)) {
-            this.ships.push(makeShip(shipLen, coordSet));
+            this.ships.push(makeShip(shipLen, shipName, coordSet));
             return true;    // used by computer AI to mark valid placements
         }
         return false;   // ""
@@ -189,8 +190,8 @@ class Computer extends Human {
 }
 
 // FACTORIES
-function makeShip(length, coords) {
-    return new Ship(length, coords);
+function makeShip(length, name, coords) {
+    return new Ship(length, name, coords);
 }
 function makeGameboard() {
     return new Gameboard();

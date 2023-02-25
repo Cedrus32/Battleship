@@ -8,6 +8,7 @@ const ui = (() => {
 
     let state = {
         placing: false,
+        replacing: false,
         selectedShip: undefined,
         coordData: undefined,
         direction: 'h'
@@ -21,21 +22,28 @@ const ui = (() => {
         if (e.target.id === 'restart') {
             // restart();
         }
-        if (e.target.parentElement.classList.contains('ship') && !e.target.parentElement.classList.contains('placed') && shipContainers[0].classList.contains('menu')) {
+        if (e.target.parentElement.parentElement.classList.contains('menu')
+        && e.target.parentElement.classList.contains('ship') && !e.target.parentElement.classList.contains('placed')) {
             setMenuSelect(e.target.parentElement);
         }
-        if (e.target.classList.contains('cell') && state.placing === true && state.coordData[1] === true) {
-            events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.slice(0, 1));
-            placeShipUI();
+        if (e.target.classList.contains('cell')) {
+            if (state.placing === false && state.replacing === false && e.target.classList.contains('placed')) {
+                state.replacing = true;
+                events.publish('queryShipData', e.target.classList[2]); // subscribed by game.js
+            }
+            if (state.placing === true && state.coordData[1] === true) {
+                events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]);
+                placeShipUI();
+            }
         }
     });
     playerBoards[0].addEventListener('mouseover', (e) => {
-        if (state.placing === true) {
-            events.publish('queryIDArray', e.target.id, state.direction, state.selectedShip.id.slice(0, 1)); // subscribed by game.js
+        if (state.placing === true || state.replacing === true) {
+            events.publish('queryCoordData', e.target.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {
-        if (state.placing === true && state.coordData !== undefined) {
+        if (state.placing === true || state.replacing === true) {
             removeCellHover();
         }
     })
@@ -147,14 +155,9 @@ const ui = (() => {
         ship.classList.remove('selected');
     }
     function setBoardHover(coordSet, isValid) {
-        if (state.coordData === undefined) {
-            state.coordData = [coordSet, isValid];
-            addCellHover(state.coordData[1]);
-        } else {
             removeCellHover();
             state.coordData = [coordSet, isValid];
             addCellHover(state.coordData[1]);
-        }
     }
     function addCellHover(isValid) {
         for (let i = 0; i < state.coordData[0].length; i++) {
@@ -170,13 +173,16 @@ const ui = (() => {
         }
     }
     function removeCellHover() {
-        for (let i = 0; i < state.coordData[0].length; i++) {
-            if (state.coordData[0][i].length <= 2) {
-                let cell = document.getElementById(state.coordData[0][i]);
-                if (cell.classList.contains('placed')) {
-                    cell.classList = 'cell placed';
-                } else {
-                    cell.classList = 'cell';
+        if (state.coordData !== undefined) {
+            console.log(state.coordData[0]);
+            for (let i = 0; i < state.coordData[0].length; i++) {
+                if (state.coordData[0][i].length <= 2) {
+                    let cell = document.getElementById(state.coordData[0][i]);
+                    if (cell.classList.contains('placed')) {
+                        cell.classList = 'cell placed';
+                    } else {
+                        cell.classList = 'cell';
+                    }
                 }
             }
         }
@@ -186,15 +192,26 @@ const ui = (() => {
         for (let i = 0; i < state.coordData[0].length; i++) {
             let cell = document.getElementById(state.coordData[0][i]);
             cell.classList = 'cell';
-            cell.classList.add('placed');
+            cell.classList.add('placed', state.selectedShip.id.split('-')[1]);
         }
         state.placing = false;
+        state.replacing = false;
         state.selectedShip = undefined;
         state.coordData = undefined;
     }
+    function replaceShipUI(name, length, coords) {
+        for (let i = 0; i < coords.length; i++) {
+            let cell = document.getElementById(coords[i]);
+            cell.classList = 'cell hover is-valid';
+        }
+        state.replacing = true;
+        state.selectedShip = document.getElementById(`${length}-${name}`);
+        state.coordData = [coords, true];
+    }
 
     // event subscriptions
-    events.subscribe('receiveIDArray', setBoardHover); // published by game.js (getCoordsFromHuman)
+    events.subscribe('receiveCoordData', setBoardHover); // published by game.js (queryCoordData)
+    events.subscribe('receiveShipData', replaceShipUI); // published by game.js (queryShipData)
 
     return {
         init, // used by index.js
