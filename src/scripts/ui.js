@@ -1,6 +1,5 @@
 import events from '../events.js';
 import create from './create.js';
-import iconsArray from './icons.js';
 
 const ui = (() => {
     let playerBoards = [document.getElementById('human').lastElementChild, document.getElementById('computer').lastElementChild];
