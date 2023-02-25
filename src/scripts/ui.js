@@ -7,7 +7,7 @@ const ui = (() => {
     let body = document.querySelector('body');
 
     let state = {
-        action: undefined,
+        placing: false,
         selectedShip: undefined,
         coordData: undefined,
         direction: 'h'
@@ -24,18 +24,18 @@ const ui = (() => {
         if (e.target.parentElement.classList.contains('ship') && !e.target.parentElement.classList.contains('placed') && shipContainers[0].classList.contains('menu')) {
             setMenuSelect(e.target.parentElement);
         }
-        if (e.target.classList.contains('cell') && state.action === 'placing' && state.coordData[1] === true) {
+        if (e.target.classList.contains('cell') && state.placing === true && state.coordData[1] === true) {
             events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.slice(0, 1));
             placeShipUI();
         }
     });
     playerBoards[0].addEventListener('mouseover', (e) => {
-        if (state.action === 'placing') {
+        if (state.placing === true) {
             events.publish('queryIDArray', e.target.id, state.direction, state.selectedShip.id.slice(0, 1)); // subscribed by game.js
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {
-        if (state.action === 'placing' && state.coordData !== undefined) {
+        if (state.placing === true && state.coordData !== undefined) {
             removeCellHover();
         }
     })
@@ -125,13 +125,13 @@ const ui = (() => {
     // placement methods
     function setMenuSelect(targetShip) {
         if (state.selectedShip === undefined) {
-            state.action = 'placing';
+            state.placing = true;
             state.selectedShip = targetShip;
             addMenuSelect(state.selectedShip);
         } else {
             if (targetShip === state.selectedShip) {
                 removeMenuSelect(state.selectedShip);
-                state.action = undefined;
+                state.placing = false;
                 state.selectedShip = undefined;
             } else if (targetShip !== state.selectedShip) {
                 removeMenuSelect(state.selectedShip);
@@ -188,7 +188,7 @@ const ui = (() => {
             cell.classList = 'cell';
             cell.classList.add('placed');
         }
-        state.action = undefined;
+        state.placing = false;
         state.selectedShip = undefined;
         state.coordData = undefined;
     }
