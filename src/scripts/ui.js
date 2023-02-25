@@ -8,7 +8,6 @@ const ui = (() => {
 
     let state = {
         placing: false,
-        replacing: false,
         selectedShip: undefined,
         coordData: undefined,
         direction: 'h'
@@ -18,33 +17,29 @@ const ui = (() => {
     body.addEventListener('click', (e) => {
         if (e.target.id === 'play') {
             play();
-        }
-        if (e.target.id === 'restart') {
+        } else if (e.target.id === 'restart') {
             // restart();
-        }
-        if (e.target.parentElement.parentElement.classList.contains('menu')
+        } else if (e.target.parentElement.parentElement.classList.contains('menu')
         && e.target.parentElement.classList.contains('ship') && !e.target.parentElement.classList.contains('placed')) {
             setMenuSelect(e.target.parentElement);
-        }
-        if (e.target.classList.contains('cell')) {
-            if (!state.placing && !state.replacing && e.target.classList.contains('placed')) {
-                state.replacing = true;
-                events.publish('queryShipData', e.target.classList[2]); // subscribed by game.js
-                events.publish('removeShipData', state.selectedShip.id.split('-')[1]); // subscribed by game.js
-            }
+        } else if (e.target.classList.contains('cell')) {
             if (state.placing && state.coordData[1]) {
                 events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]);
                 placeShipUI();
+            } else if (!state.placing && e.target.classList.contains('placed')) {
+                state.placing = true;
+                events.publish('queryShipData', e.target.classList[2]); // subscribed by game.js
+                events.publish('removeShipData', state.selectedShip.id.split('-')[1]); // subscribed by game.js
             }
         }
     });
     playerBoards[0].addEventListener('mouseover', (e) => {
-        if (state.placing || state.replacing) {
+        if (state.placing) {
             events.publish('queryCoordData', e.target.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {
-        if (state.placing || state.replacing) {
+        if (state.placing) {
             removeCellHover();
         }
     })
@@ -175,7 +170,6 @@ const ui = (() => {
     }
     function removeCellHover() {
         if (state.coordData !== undefined) {
-            console.log(state.coordData[0]);
             for (let i = 0; i < state.coordData[0].length; i++) {
                 if (state.coordData[0][i].length <= 2) {
                     let cell = document.getElementById(state.coordData[0][i]);
@@ -196,7 +190,6 @@ const ui = (() => {
             cell.classList.add('placed', state.selectedShip.id.split('-')[1]);
         }
         state.placing = false;
-        state.replacing = false;
         state.selectedShip = undefined;
         state.coordData = undefined;
     }
@@ -205,7 +198,6 @@ const ui = (() => {
             let cell = document.getElementById(coords[i]);
             cell.classList = 'cell hover is-valid';
         }
-        state.replacing = true;
         state.selectedShip = document.getElementById(`${length}-${name}`);
         state.coordData = [coords, true];
     }

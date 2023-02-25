@@ -23,7 +23,6 @@ const game = (() => {
         events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
     }
     function removeShipData(targetName) {
-        console.log('enter removeShipData()...')
         human.board.removeShip(targetName);
     }
 
