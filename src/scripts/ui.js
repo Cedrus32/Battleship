@@ -23,11 +23,11 @@ const ui = (() => {
             setMenuSelect(e.target.parentElement);
         } else if (e.target.classList.contains('cell')) {
             if (state.placing && state.coordData[1]) {
-                events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]); // ! update when human class method is fixed -- include coordSet from coordData
+                events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]);
                 placeShipUI();
             } else if (!state.placing && e.target.classList.contains('placed')) {
                 state.placing = true;
-                events.publish('queryShipData', e.target.classList[2]); // subscribed by game.js // ! remove need for storing ship type in ui -- query ship based on coords
+                events.publish('queryShipData', e.target.id); // subscribed by game.js
                 events.publish('removeShipData', state.selectedShip.id.split('-')[1]); // subscribed by game.js
             }
         }
@@ -186,7 +186,7 @@ const ui = (() => {
         for (let i = 0; i < state.coordData[0].length; i++) {
             let cell = document.getElementById(state.coordData[0][i]);
             cell.classList = 'cell';
-            cell.classList.add('placed', state.selectedShip.id.split('-')[1]);
+            cell.classList.add('placed');
         }
         state.placing = false;
         state.selectedShip = undefined;

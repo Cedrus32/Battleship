@@ -37,26 +37,25 @@ class Gameboard {
         this.shipsSunk = 0;
     }
 
-    getShip(shipName) {
+    getShip(targetCoord) {
         for (let i = 0; i < this.ships.length; i++) {
-            if (this.ships[i].name === shipName) {
-                return this.ships[i];
+            for (let j = 0; j < this.ships[i].coords.length; j++) {
+                if (this.ships[i].coords[j] === targetCoord) {
+                    return this.ships[i];
+                }
             }
         }
     }
     removeShip(shipName) {
-        console.log('enter removeShip()...')
-        console.log(shipName);
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].name === shipName) {
                 this.ships.splice(i, 1);
-                console.log(this.ships);
             }
         }
     }
-    placeShip(startCoord, dir, shipLen, shipName) { // ! separate out for human & computer
-        let coordSet = this.getCoords(startCoord, dir, shipLen); // ! redundanct for human, needed by computer AI
-        if (this.setIsValid(coordSet)) { // ! redundant for human, needed by computer AI
+    placeShip(startCoord, dir, shipLen, shipName) {
+        let coordSet = this.getCoords(startCoord, dir, shipLen);
+        if (this.setIsValid(coordSet)) {
             this.ships.push(makeShip(shipLen, shipName, coordSet));
             return true;    // used by computer AI to mark valid placements
         }

@@ -18,8 +18,8 @@ const game = (() => {
     function placeShip(startCoord, direction, length, name) {
         human.board.placeShip(startCoord, direction, length, name);
     }
-    function queryShipData(targetName) {
-        let ship = human.board.getShip(targetName);
+    function queryShipData(targetID) {
+        let ship = human.board.getShip(targetID);
         events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
     }
     function removeShipData(targetName) {
