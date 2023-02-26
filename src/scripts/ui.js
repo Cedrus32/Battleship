@@ -24,11 +24,11 @@ const ui = (() => {
             setMenuSelect(e.target.parentElement);
         } else if (e.target.classList.contains('cell')) {
             if (state.placing && state.coordData[1]) {
-                events.publish('placeShip', e.target.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]);
+                events.publish('placeShip', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]); // subscribed by game.js
                 placeShipUI();
             } else if (!state.placing && e.target.classList.contains('placed')) {
                 state.placing = true;
-                events.publish('queryShipData', e.target.id); // subscribed by game.js
+                events.publish('queryShipData', state.targetCell.id); // subscribed by game.js
                 events.publish('removeShipData', state.selectedShip.id.split('-')[1]); // subscribed by game.js
             }
         }
