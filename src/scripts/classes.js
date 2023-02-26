@@ -57,11 +57,12 @@ class Gameboard {
         let coordSet = this.getCoords(startCoord, dir, shipLen);
         if (this.setIsValid(coordSet)) {
             this.ships.push(makeShip(shipLen, shipName, coordSet));
+            console.log(this.ships);
             return true;    // used by computer AI to mark valid placements
         }
         return false;   // ""
     }
-    getCoords(startCoord, dir, shipLen) { // ! add support for arrow keys in backend 'u', 'd', 'l', 'r'
+    getCoords(startCoord, dir, shipLen) {
         let coordSet = [startCoord];
         let i = 0;
         switch (dir) {
@@ -76,6 +77,28 @@ class Gameboard {
                 }
                 break;
             }
+            case 'l': {
+                let xPosition = parseInt(startCoord.split('')[0]);
+                while (i < shipLen - 1) {
+                    xPosition -= 1;
+                    xPosition.toString();
+                    let newCoord = xPosition + startCoord.split('')[1];
+                    coordSet.splice(0, 0, newCoord);
+                    i++;
+                }
+                break;
+            }
+            case 'u': {
+                let yPosition = parseInt(startCoord.split('')[1]);
+                while (i < shipLen - 1) {
+                    yPosition -= 1;
+                    yPosition.toString();
+                    let newCoord = startCoord.split('')[0] + yPosition;
+                    coordSet.splice(0, 0, newCoord);
+                    i++;
+                }
+                break;
+            }
             case 'd': {
                 let yPosition = parseInt(startCoord.split('')[1]);
                 while (i < shipLen - 1) {
@@ -85,9 +108,9 @@ class Gameboard {
                     coordSet.push(newCoord);
                     i++;
                 }
-                break;
             }
         }
+        console.log(coordSet);
         return coordSet;
     }
     setIsValid(coordSet) {
