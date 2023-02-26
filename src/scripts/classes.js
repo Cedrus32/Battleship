@@ -54,9 +54,9 @@ class Gameboard {
             }
         }
     }
-    placeShip(startCoord, dir, shipLen, shipName) {
-        let coordSet = this.getCoords(startCoord, dir, shipLen);
-        if (this.setIsValid(coordSet)) {
+    placeShip(startCoord, dir, shipLen, shipName) { // ! separate out for human & computer
+        let coordSet = this.getCoords(startCoord, dir, shipLen); // ! redundanct for human, needed by computer AI
+        if (this.setIsValid(coordSet)) { // ! redundant for human, needed by computer AI
             this.ships.push(makeShip(shipLen, shipName, coordSet));
             return true;    // used by computer AI to mark valid placements
         }
