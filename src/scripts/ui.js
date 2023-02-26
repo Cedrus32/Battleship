@@ -8,6 +8,7 @@ const ui = (() => {
 
     let state = {
         placing: false,
+        targetCell: undefined,
         selectedShip: undefined,
         coordData: undefined,
         direction: 'r'
@@ -33,23 +34,28 @@ const ui = (() => {
         }
     });
     body.addEventListener('keydown', (e) => {
-        switch (e.key) {
-            case 'ArrowUp':
-                state.direction = 'u'
-                break;
-            case 'ArrowDown':
-                state.direction = 'd'
-                break;
-            case 'ArrowLeft':
-                state.direction = 'l';
-                break;
-            case 'ArrowRight':
-                state.direction = 'r';
+        let validKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+        if (validKeys.includes(e.key)) {
+            switch (e.key) {
+                case 'ArrowUp':
+                    state.direction = 'u'
+                    break;
+                case 'ArrowDown':
+                    state.direction = 'd'
+                    break;
+                case 'ArrowLeft':
+                    state.direction = 'l';
+                    break;
+                case 'ArrowRight':
+                    state.direction = 'r';
+            }
+            events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     })
     playerBoards[0].addEventListener('mouseover', (e) => {
+        state.targetCell = e.target;
         if (state.placing) {
-            events.publish('queryCoordData', e.target.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
+            events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {

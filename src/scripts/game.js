@@ -27,7 +27,7 @@ const game = (() => {
     }
 
     // event subscriptions
-    events.subscribe('queryCoordData', queryCoordData); // published by ui.js (playerBoards[0].onMouseOver)
+    events.subscribe('queryCoordData', queryCoordData); // published by ui.js (playerBoards[0].onMouseOver, body.onKeyDown)
     events.subscribe('placeShip', placeShip); // published by ui.js (body.onClick)
     events.subscribe('queryShipData', queryShipData); // published by ui.js (body.onClick)
     events.subscribe('removeShipData', removeShipData); // published by ui.js (body.onClick)

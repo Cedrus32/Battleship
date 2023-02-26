@@ -61,26 +61,31 @@ class Gameboard {
         }
         return false;   // ""
     }
-    getCoords(startCoord, dir, shipLen) {
+    getCoords(startCoord, dir, shipLen) { // ! add support for arrow keys in backend 'u', 'd', 'l', 'r'
         let coordSet = [startCoord];
         let i = 0;
-        if (dir === 'h') {
-            let xPosition = parseInt(startCoord.split('')[0]);
-            while (i < shipLen - 1) {
-                xPosition += 1;
-                xPosition.toString();
-                let newCoord = xPosition + startCoord.split('')[1];
-                coordSet.push(newCoord);
-                i++;
+        switch (dir) {
+            case 'r': {
+                let xPosition = parseInt(startCoord.split('')[0]);
+                while (i < shipLen - 1) {
+                    xPosition += 1;
+                    xPosition.toString();
+                    let newCoord = xPosition + startCoord.split('')[1];
+                    coordSet.push(newCoord);
+                    i++;
+                }
+                break;
             }
-        } else if (dir === 'v') {
-            let yPosition = parseInt(startCoord.split('')[1]);
-            while (i < shipLen - 1) {
-                yPosition += 1;
-                yPosition.toString();
-                let newCoord = startCoord.split('')[0] + yPosition;
-                coordSet.push(newCoord);
-                i++;
+            case 'd': {
+                let yPosition = parseInt(startCoord.split('')[1]);
+                while (i < shipLen - 1) {
+                    yPosition += 1;
+                    yPosition.toString();
+                    let newCoord = startCoord.split('')[0] + yPosition;
+                    coordSet.push(newCoord);
+                    i++;
+                }
+                break;
             }
         }
         return coordSet;
