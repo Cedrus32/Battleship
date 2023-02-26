@@ -10,7 +10,7 @@ const ui = (() => {
         placing: false,
         selectedShip: undefined,
         coordData: undefined,
-        direction: 'h'
+        direction: 'r'
     }
 
     // event listeners
@@ -32,6 +32,21 @@ const ui = (() => {
             }
         }
     });
+    body.addEventListener('keydown', (e) => {
+        switch (e.key) {
+            case 'ArrowUp':
+                state.direction = 'u'
+                break;
+            case 'ArrowDown':
+                state.direction = 'd'
+                break;
+            case 'ArrowLeft':
+                state.direction = 'l';
+                break;
+            case 'ArrowRight':
+                state.direction = 'r';
+        }
+    })
     playerBoards[0].addEventListener('mouseover', (e) => {
         if (state.placing) {
             events.publish('queryCoordData', e.target.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
@@ -141,6 +156,9 @@ const ui = (() => {
                 state.selectedShip = targetShip;
                 addMenuSelect(state.selectedShip);
             }   
+        }
+        if (state.direction !== 'r') {
+            state.direction = 'r';
         }
     }
     function addMenuSelect(ship) {
