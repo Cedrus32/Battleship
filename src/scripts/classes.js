@@ -53,12 +53,16 @@ class Gameboard {
             }
         }
     }
+    clearShips() {
+        while (this.ships.length > 0) {
+            this.ships.pop();
+        }
+    }
     placeShip(startCoord, dir, shipLen, shipName) {
-        let coordSet = this.getCoords(startCoord, dir, shipLen);
-        if (this.setIsValid(coordSet)) {
+        let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
+        if (this.setIsValid(coordSet)) {    // used by computer AI to varifyplacement validity
             this.ships.push(makeShip(shipLen, shipName, coordSet));
-            console.log(this.ships);
-            return true;    // used by computer AI to mark valid placements
+            return true;    // used by computer AI to control placement loop
         }
         return false;   // ""
     }
@@ -66,28 +70,6 @@ class Gameboard {
         let coordSet = [startCoord];
         let i = 0;
         switch (dir) {
-            case 'r': {
-                let xPosition = parseInt(startCoord.split('')[0]);
-                while (i < shipLen - 1) {
-                    xPosition += 1;
-                    xPosition.toString();
-                    let newCoord = xPosition + startCoord.split('')[1];
-                    coordSet.push(newCoord);
-                    i++;
-                }
-                break;
-            }
-            case 'l': {
-                let xPosition = parseInt(startCoord.split('')[0]);
-                while (i < shipLen - 1) {
-                    xPosition -= 1;
-                    xPosition.toString();
-                    let newCoord = xPosition + startCoord.split('')[1];
-                    coordSet.splice(0, 0, newCoord);
-                    i++;
-                }
-                break;
-            }
             case 'u': {
                 let yPosition = parseInt(startCoord.split('')[1]);
                 while (i < shipLen - 1) {
@@ -108,9 +90,30 @@ class Gameboard {
                     coordSet.push(newCoord);
                     i++;
                 }
+                break;
+            }
+            case 'l': {
+                let xPosition = parseInt(startCoord.split('')[0]);
+                while (i < shipLen - 1) {
+                    xPosition -= 1;
+                    xPosition.toString();
+                    let newCoord = xPosition + startCoord.split('')[1];
+                    coordSet.splice(0, 0, newCoord);
+                    i++;
+                }
+                break;
+            }
+            case 'r': {
+                let xPosition = parseInt(startCoord.split('')[0]);
+                while (i < shipLen - 1) {
+                    xPosition += 1;
+                    xPosition.toString();
+                    let newCoord = xPosition + startCoord.split('')[1];
+                    coordSet.push(newCoord);
+                    i++;
+                }
             }
         }
-        console.log(coordSet);
         return coordSet;
     }
     setIsValid(coordSet) {
@@ -191,9 +194,7 @@ class Computer extends Human {
 
     randomizeShips() {
         let availShips = [1, 1, 2, 2, 3, 4, 5];
-        let dirs = ['h', 'v'];
-        // availShips.splice(6);   // ! remove after testing
-        // availShips.splice(4, 1);    // ! remove after testing
+        let dirs = ['u', 'd', 'l', 'r'];
         
         while (availShips.length > 0) {
             let shipLen = availShips[0];

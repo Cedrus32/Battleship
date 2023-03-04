@@ -19,7 +19,7 @@ const ui = (() => {
         if (e.target.id === 'play') {
             play();
         } else if (e.target.id === 'restart') {
-            // restart();
+            restart();
         } else if (e.target.parentElement.parentElement.classList.contains('menu') && !e.target.parentElement.classList.contains('placed')) {
             setMenuSelect(e.target.parentElement);
         } else if (e.target.classList.contains('cell')) {
@@ -82,6 +82,24 @@ const ui = (() => {
             generateShipTallies(shipContainers[i], i);
             i++;
         }
+    }
+    function restart() {
+        // reset board
+        for (let i = 0; i < playerBoards[0].children.length; i++) {
+            for (let j = 0; j < playerBoards[0].children[i].children.length; j++) {
+                if (playerBoards[0].children[i].children[j].classList.length > 1) {
+                    playerBoards[0].children[i].children[j].classList = 'cell';
+                }
+            }
+        }
+        // reset menu
+        for (let i = 0; i < shipContainers[0].children.length; i++) {
+            if (shipContainers[0].children[i].classList.contains('placed')) {
+                shipContainers[0].children[i].classList.remove('placed');
+            }
+        }
+        // clear human player of ships
+        events.publish('clearShipData', ''); // subscribed by game.js
     }
 
     // generative methods
