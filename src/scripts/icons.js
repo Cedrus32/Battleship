@@ -1,8 +1,8 @@
 // cache images
 let imgQuery = require.context('../assets', false, /\.(png|svg|jpg|jpeg|gif)$/i);
 let iconsArray = importIcons(imgQuery);
-console.log('***** ICONS ARRAY *****');
-console.log(iconsArray);
+// console.log('***** ICONS ARRAY *****');
+// console.log(iconsArray);
 
 // methods
 function importIcons(r) {

@@ -149,6 +149,16 @@ body {
         width: 100%;
     }
 
+        button {
+            height: calc(var(--player-fr) * 2);
+            width: auto;
+        }
+
+            img {
+                height: 100%;
+                width: auto;
+            }
+
 /* COLORS */
 
 main {

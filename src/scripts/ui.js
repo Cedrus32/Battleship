@@ -4,6 +4,7 @@ import create from './create.js';
 const ui = (() => {
     let playerBoards = [document.getElementById('human').lastElementChild, document.getElementById('computer').lastElementChild];
     let shipContainers = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
+    let playButton = document.getElementById('play-game');
     let body = document.querySelector('body');
 
     let state = {
@@ -16,9 +17,9 @@ const ui = (() => {
 
     // event listeners
     body.addEventListener('click', (e) => {
-        if (e.target.id === 'play') {
-            play();
-        } else if (e.target.id === 'restart') {
+        if (e.target.id === 'play-game' || e.target.id === 'play') {
+            // play();
+        } else if (e.target.id === 'restart-game' || e.target.id === 'restart') {
             restart();
         } else if (e.target.parentElement.parentElement.classList.contains('menu') && !e.target.parentElement.classList.contains('placed')) {
             setMenuSelect(e.target.parentElement);
@@ -88,7 +89,7 @@ const ui = (() => {
         }
     }
     function restart() {
-        // reset board
+        // reset boards
         for (let i = 0; i < playerBoards[0].children.length; i++) {
             for (let j = 0; j < playerBoards[0].children[i].children.length; j++) {
                 if (playerBoards[0].children[i].children[j].classList.length > 1) {
@@ -96,14 +97,27 @@ const ui = (() => {
                 }
             }
         }
-        // reset menu
+        // ! add computer board
+        // reset menus
         for (let i = 0; i < shipContainers[0].children.length; i++) {
             if (shipContainers[0].children[i].classList.contains('placed')) {
                 shipContainers[0].children[i].classList.remove('placed');
             }
         }
-        // clear human player of ships
+        // ! add computer menu
+        // reset play button
+        playButton.children[0].src = './icons/play_gray.svg';
+        playButton.disabled = true;
+        playButton.ariaDisabled = true;
+        // clear player objects
         events.publish('clearShipData', ''); // subscribed by game.js
+        // ! add computer object
+        // clear state
+        state.placing = false;
+        state.targetCell = undefined;
+        state.selectedShip = undefined;
+        state.coordData = undefined;
+        state.direction = 'r';
     }
 
     // generative methods
@@ -246,10 +260,16 @@ const ui = (() => {
         state.selectedShip = document.getElementById(`${length}-${name}`);
         state.coordData = [coords, true];
     }
+    function makePlayLive() {
+        playButton.children[0].src = './icons/play.svg';
+        playButton.disabled = false;
+        playButton.ariaDisabled = false;
+    }
 
     // event subscriptions
     events.subscribe('receiveCoordData', setBoardHover); // published by game.js (queryCoordData)
     events.subscribe('receiveShipData', replaceShipUI); // published by game.js (queryShipData)
+    events.subscribe('makePlayLive', makePlayLive); // published by classes.js (gameboard.placeShip)
 
     return {
         init, // used by index.js

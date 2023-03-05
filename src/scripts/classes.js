@@ -1,3 +1,5 @@
+import events from '../events.js';
+
 // CLASSES
 class Ship {
     constructor(length = null, name = null, coords = null) {
@@ -62,6 +64,9 @@ class Gameboard {
         let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
         if (this.setIsValid(coordSet)) {    // used by computer AI to varifyplacement validity
             this.ships.push(makeShip(shipLen, shipName, coordSet));
+            if (this.ships.length === 7) {
+                events.publish('makePlayLive', ''); // subscribed by ui.js, game.js
+            }
             return true;    // used by computer AI to control placement loop
         }
         return false;   // ""
