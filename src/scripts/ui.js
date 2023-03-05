@@ -16,8 +16,6 @@ const ui = (() => {
         direction: 'r'
     }
 
-    // ! add "replacing" value in gameboard object to store replacing ship -- used to "snap back" when pressing play with replaced ship selected
-
     // event listeners
     body.addEventListener('click', (e) => {
         if (state.playing === false) {
@@ -88,7 +86,6 @@ const ui = (() => {
     }
     function play() {
         // replace selected ship to original coords
-        console.log(state);
         if (state.placing === true) {
             events.publish('replaceToOriginal', ''); // subscribed by game.js
             placeShipUI();
@@ -102,7 +99,7 @@ const ui = (() => {
             i++;
         }
         // ask computer board to generate placements
-        // events.publish('generateComputerShips', ''); // subscribed by game.js
+        events.publish('generateComputerShips', ''); // subscribed by game.js
         // set state to play
         state.placing = false;
         state.playing = true;

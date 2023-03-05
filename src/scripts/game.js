@@ -34,6 +34,11 @@ const game = (() => {
         events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
     }
 
+    function generateComputerShips() {
+        computer.randomizeShips();
+        console.log(computer.board.ships);
+    }
+
     // event subscriptions
     events.subscribe('queryCoordData', queryCoordData); // published by ui.js (playerBoards[0].onMouseOver, body.onKeyDown)
     events.subscribe('placeShip', placeShip); // published by ui.js (body.onClick)
@@ -41,6 +46,7 @@ const game = (() => {
     events.subscribe('removeShipData', removeShipData); // published by ui.js (body.onClick)
     events.subscribe('clearShipData', clearShipData); // published by ui.js (body.onClick)
     events.subscribe('replaceToOriginal', replaceToOriginal); // published by ui.js (body.onClick)
+    events.subscribe('generateComputerShips', generateComputerShips); // published by ui.js (body.onClick)
 
     return {
         init, // used by index.js
