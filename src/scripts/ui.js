@@ -35,6 +35,16 @@ const ui = (() => {
                     events.publish('removeShipData', state.selectedShip.id.split('-')[1]); // subscribed by game.js
                 }
             }
+        } else if (state.playing === true) {
+            if (e.target.id === 'restart-game' || e.target.id === 'restart') {
+                console.log('display box')
+            } else if (e.target.id === 'confirm-restart' || e.target.id === 'confirm') {
+                console.log('clear and restart game')
+            } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
+                console.log('close box');
+            } else if (e.target.classList.contains('cell') && e.target.parentElement.parentElement.parentElement.id === 'computer') {
+                console.log('send attack');
+            }
         }
     });
     body.addEventListener('keydown', (e) => {
