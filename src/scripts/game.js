@@ -28,13 +28,19 @@ const game = (() => {
     function clearShipData() {
         human.board.clearShips();
     }
+    function replaceToOriginal() {
+        let ship = human.board.replacing;
+        human.board.replaceShipToOriginal();
+        events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
+    }
 
     // event subscriptions
     events.subscribe('queryCoordData', queryCoordData); // published by ui.js (playerBoards[0].onMouseOver, body.onKeyDown)
     events.subscribe('placeShip', placeShip); // published by ui.js (body.onClick)
     events.subscribe('queryShipData', queryShipData); // published by ui.js (body.onClick)
     events.subscribe('removeShipData', removeShipData); // published by ui.js (body.onClick)
-    events.subscribe('clearShipData', clearShipData); // published by ui.ja (body.onClick)
+    events.subscribe('clearShipData', clearShipData); // published by ui.js (body.onClick)
+    events.subscribe('replaceToOriginal', replaceToOriginal); // published by ui.js (body.onClick)
 
     return {
         init, // used by index.js

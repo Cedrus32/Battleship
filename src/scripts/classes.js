@@ -36,6 +36,7 @@ class Gameboard {
                      [[], [], [], [], [], [], [], [], [], []],
                      [[], [], [], [], [], [], [], [], [], []]];
         this.ships = [];
+        this.replacing = undefined;
         this.shipsSunk = 0;
     }
 
@@ -51,6 +52,7 @@ class Gameboard {
     removeShip(shipName) {
         for (let i = 0; i < this.ships.length; i++) {
             if (this.ships[i].name === shipName) {
+                this.replacing = this.ships[i];
                 this.ships.splice(i, 1);
             }
         }
@@ -61,15 +63,26 @@ class Gameboard {
         }
     }
     placeShip(startCoord, dir, shipLen, shipName) {
-        let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
-        if (this.setIsValid(coordSet)) {    // used by computer AI to varifyplacement validity
-            this.ships.push(makeShip(shipLen, shipName, coordSet));
-            if (this.ships.length === 7) {
-                events.publish('makePlayLive', ''); // subscribed by ui.js, game.js
+        if (this.replacing !== undefined) {
+            this.ships.push(this.replacing);
+            this.replacing = undefined;
+        } else {
+            let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
+            if (this.setIsValid(coordSet)) {    // used by computer AI to varifyplacement validity
+                this.ships.push(makeShip(shipLen, shipName, coordSet));
+                if (this.ships.length === 7) {
+                    events.publish('makePlayLive', ''); // subscribed by ui.js, game.js
+                }
+                return true;    // used by computer AI to control placement loop
             }
-            return true;    // used by computer AI to control placement loop
+            return false;   // ""
         }
-        return false;   // ""
+    }
+    replaceShipToOriginal() {
+        this.ships.push(this.replacing);
+        this.replacing = undefined;
+        console.log(this.ships);
+        console.log(this.replacing);
     }
     getCoords(startCoord, dir, shipLen) {
         let coordSet = [startCoord];
