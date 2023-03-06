@@ -22,7 +22,7 @@ const game = (() => {
         let ship = human.board.getShip(targetID);
         events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
     }
-    function removeShipData(targetName) {
+    function deleteShipObject(targetName) {
         human.board.removeShip(targetName);
     }
     function clearShipData() {
@@ -36,14 +36,13 @@ const game = (() => {
 
     function generateComputerShips() {
         computer.randomizeShips();
-        console.log(computer.board.ships);
     }
 
     // event subscriptions
     events.subscribe('queryCoordData', queryCoordData); // published by ui.js (playerBoards[0].onMouseOver, body.onKeyDown)
     events.subscribe('placeShip', placeShip); // published by ui.js (body.onClick)
     events.subscribe('queryShipData', queryShipData); // published by ui.js (body.onClick)
-    events.subscribe('removeShipData', removeShipData); // published by ui.js (body.onClick)
+    events.subscribe('deleteShipObject', deleteShipObject); // published by ui.js (body.onClick)
     events.subscribe('clearShipData', clearShipData); // published by ui.js (body.onClick)
     events.subscribe('replaceToOriginal', replaceToOriginal); // published by ui.js (body.onClick)
     events.subscribe('generateComputerShips', generateComputerShips); // published by ui.js (body.onClick)

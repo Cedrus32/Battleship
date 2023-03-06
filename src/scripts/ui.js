@@ -30,9 +30,10 @@ const ui = (() => {
                     events.publish('placeShip', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]); // subscribed by game.js
                     placeShipUI();
                 } else if (!state.placing && e.target.classList.contains('placed')) {
+                    console.log(state.targetCell);
                     state.placing = true;
                     events.publish('queryShipData', state.targetCell.id); // subscribed by game.js
-                    events.publish('removeShipData', state.selectedShip.id.split('-')[1]); // subscribed by game.js
+                    events.publish('deleteShipObject', state.selectedShip.id.split('-')[1]); // subscribed by game.js
                 }
             }
         } else if (state.playing === true) {
@@ -72,19 +73,15 @@ const ui = (() => {
         }
     })
     playerBoards[0].addEventListener('mouseover', (e) => {
-        if (state.playing === false) {
-            state.targetCell = e.target;
-            if (state.placing) {
-                events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
-            }
+        state.targetCell = e.target;
+        if (state.placing && !state.playing) {
+            events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {
-        if (state.playing === false) {
-            if (state.placing) {
-                removeCellHover();
-            }   
-        }
+        if (state.placing && !state.playing) {
+            removeCellHover();
+        }   
     })
 
     // driver methods
@@ -152,39 +149,7 @@ const ui = (() => {
         state.direction = 'r';
     }
 
-    // generative methods
-    function generateGrid(board) {
-        let i = 0;
-        while (i < 10) {
-            let row = create.div('', '.row')
-            let j = 0;
-            while (j < 10) {
-                let cell = create.div('', '.cell', `#${j}${i}`);
-                row.append(cell);
-                j++;
-            }
-            board.append(row);
-            i++;
-        }
-    }
-    function setSectionType(section, selector) {
-        if (section.classList.length > 0) {
-            section.classList = '';
-        }
-        section.classList.add(selector);
-    }
-    function generateShipMenu() {
-        makeShipIcons('', shipContainers[0]);
-    }
-    function generateShipTallies(tallyContainer, index) {
-        let playerType;
-        if (index === 0) {
-            playerType = 'h';
-        } else  {
-            playerType = 'c';
-        }
-        makeShipIcons(playerType, tallyContainer);
-    }
+    // multi-use helper methods
     function makeShipIcons(playerType, container) {
         let ships = [[5, 'acc'],
                      [4, 'bs'],
@@ -208,10 +173,30 @@ const ui = (() => {
             container.append(cellContainer);
         }
     }
-    function clearShipContainer(container) {
-        while (container.lastElementChild) {
-            container.removeChild(container.lastElementChild);
+
+    // init helper methods
+    function generateGrid(board) {
+        let i = 0;
+        while (i < 10) {
+            let row = create.div('', '.row')
+            let j = 0;
+            while (j < 10) {
+                let cell = create.div('', '.cell', `#${j}${i}`);
+                row.append(cell);
+                j++;
+            }
+            board.append(row);
+            i++;
         }
+    }
+    function setSectionType(section, selector) {
+        if (section.classList.length > 0) {
+            section.classList = '';
+        }
+        section.classList.add(selector);
+    }
+    function generateShipMenu() {
+        makeShipIcons('', shipContainers[0]);
     }
 
     // placement methods
@@ -219,7 +204,7 @@ const ui = (() => {
         if (state.selectedShip === undefined) {
             state.placing = true;
             state.selectedShip = targetShip;
-            addMenuSelect(state.selectedShip);
+            addSelectInMenu(state.selectedShip);
         } else {
             if (targetShip === state.selectedShip) {
                 removeMenuSelect(state.selectedShip);
@@ -228,14 +213,14 @@ const ui = (() => {
             } else if (targetShip !== state.selectedShip) {
                 removeMenuSelect(state.selectedShip);
                 state.selectedShip = targetShip;
-                addMenuSelect(state.selectedShip);
+                addSelectInMenu(state.selectedShip);
             }   
         }
         if (state.direction !== 'r') {
             state.direction = 'r';
         }
     }
-    function addMenuSelect(ship) {
+    function addSelectInMenu(ship) {
         ship.classList.add('selected');
     }
     function removeMenuSelect(ship) {
@@ -293,11 +278,25 @@ const ui = (() => {
         state.coordData = [coords, true];
     }
 
-    // play methods
+    // play helper methods
     function makePlayLive() {
         playButton.children[0].src = './icons/play.svg';
         playButton.disabled = false;
         playButton.ariaDisabled = false;
+    }
+    function generateShipTallies(tallyContainer, index) {
+        let playerType;
+        if (index === 0) {
+            playerType = 'h';
+        } else  {
+            playerType = 'c';
+        }
+        makeShipIcons(playerType, tallyContainer);
+    }
+    function clearShipContainer(container) {
+        while (container.lastElementChild) {
+            container.removeChild(container.lastElementChild);
+        }
     }
 
     // event subscriptions
