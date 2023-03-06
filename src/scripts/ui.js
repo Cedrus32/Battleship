@@ -49,35 +49,41 @@ const ui = (() => {
     });
     body.addEventListener('keydown', (e) => {
         let validKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-        if (validKeys.includes(e.key)) {
-            switch (e.key) {
-                case 'ArrowUp':
-                    state.direction = 'u'
-                    break;
-                case 'ArrowDown':
-                    state.direction = 'd'
-                    break;
-                case 'ArrowLeft':
-                    state.direction = 'l';
-                    break;
-                case 'ArrowRight':
-                    state.direction = 'r';
+        if (state.playing === false) {
+            if (validKeys.includes(e.key)) {
+                switch (e.key) {
+                    case 'ArrowUp':
+                        state.direction = 'u'
+                        break;
+                    case 'ArrowDown':
+                        state.direction = 'd'
+                        break;
+                    case 'ArrowLeft':
+                        state.direction = 'l';
+                        break;
+                    case 'ArrowRight':
+                        state.direction = 'r';
+                }
+                events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
+            } else if (e.key === 'Escape') {
+                setMenuSelect(state.selectedShip);
+                removeCellHover();
             }
-            events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
-        } else if (e.key === 'Escape') {
-            setMenuSelect(state.selectedShip);
-            removeCellHover();
         }
     })
     playerBoards[0].addEventListener('mouseover', (e) => {
-        state.targetCell = e.target;
-        if (state.placing) {
-            events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
+        if (state.playing === false) {
+            state.targetCell = e.target;
+            if (state.placing) {
+                events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
+            }
         }
     });
     playerBoards[0].addEventListener('mouseleave', () => {
-        if (state.placing) {
-            removeCellHover();
+        if (state.playing === false) {
+            if (state.placing) {
+                removeCellHover();
+            }   
         }
     })
 
@@ -286,6 +292,8 @@ const ui = (() => {
         state.selectedShip = document.getElementById(`${length}-${name}`);
         state.coordData = [coords, true];
     }
+
+    // play methods
     function makePlayLive() {
         playButton.children[0].src = './icons/play.svg';
         playButton.disabled = false;
