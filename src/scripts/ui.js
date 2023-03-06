@@ -30,7 +30,6 @@ const ui = (() => {
                     events.publish('placeShip', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]); // subscribed by game.js
                     placeShipUI();
                 } else if (!state.placing && e.target.classList.contains('placed')) {
-                    console.log(state.targetCell);
                     state.placing = true;
                     events.publish('queryShipData', state.targetCell.id); // subscribed by game.js
                     events.publish('deleteShipObject', state.selectedShip.id.split('-')[1]); // subscribed by game.js
@@ -269,13 +268,14 @@ const ui = (() => {
         state.selectedShip = undefined;
         state.coordData = undefined;
     }
-    function replaceShipUI(name, length, coords) {
+    function replaceShipUI(name, dir, length, coords) {
         for (let i = 0; i < coords.length; i++) {
             let cell = document.getElementById(coords[i]);
             cell.classList = 'cell hover is-valid';
         }
         state.selectedShip = document.getElementById(`${length}-${name}`);
         state.coordData = [coords, true];
+        state.dir = dir;
     }
 
     // play helper methods

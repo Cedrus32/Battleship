@@ -20,7 +20,7 @@ const game = (() => {
     }
     function queryShipData(targetID) {
         let ship = human.board.getShip(targetID);
-        events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
+        events.publish('receiveShipData', ship.name, ship.dir, ship.length, ship.coords); // subscribed by ui.js
     }
     function deleteShipObject(targetName) {
         human.board.removeShip(targetName);

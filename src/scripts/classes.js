@@ -2,8 +2,9 @@ import events from '../events.js';
 
 // CLASSES
 class Ship {
-    constructor(length = null, name = null, coords = null) {
+    constructor(length = null, dir = null, name = null, coords = null) {
         this.length = length;
+        this.dir = dir;
         this.name = name;
         this.hits = 0;
         this.sunk = false;
@@ -67,7 +68,7 @@ class Gameboard {
     placeShip(startCoord, dir, shipLen, shipName) {
         let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
         if (this.setIsValid(coordSet)) {    // used by computer AI to varifyplacement validity
-            this.ships.push(makeShip(shipLen, shipName, coordSet));
+            this.ships.push(makeShip(shipLen, dir, shipName, coordSet));
             if (this.ships.length === 7) {
                 events.publish('makePlayLive', ''); // subscribed by ui.js, game.js
             }
@@ -250,8 +251,8 @@ class Computer extends Human {
 }
 
 // FACTORIES
-function makeShip(length, name, coords) {
-    return new Ship(length, name, coords);
+function makeShip(length, dir, name, coords) {
+    return new Ship(length, dir, name, coords);
 }
 function makeGameboard() {
     return new Gameboard();
