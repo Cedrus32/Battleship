@@ -77,10 +77,22 @@ const ui = (() => {
             events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     });
-    playerBoards[0].addEventListener('mouseleave', () => {
+    playerBoards[0].addEventListener('mouseout', () => {
         if (state.placing && !state.playing) {
             removeCellHover();
         }   
+    })
+    playerBoards[1].addEventListener('mouseover', (e) => {
+        // e.target.classList.add('attack');
+        if (state.playing) {
+            e.target.classList.add('attack');
+        }
+    })
+    playerBoards[1].addEventListener('mouseout', (e) => {
+        // e.target.classList.remove('attack');
+        if (state.playing) {
+            e.target.classList.remove('attack');
+        }
     })
 
     // driver methods
