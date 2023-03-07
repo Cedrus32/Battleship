@@ -310,8 +310,6 @@ const ui = (() => {
         }
     }
     function displayHit(player, coord, hit) {
-        // ! sort out what player is referencing --> target player or originating player
-        console.log(player, coord, hit);
         if (player === 'computer') {
             if (hit) {
                 state.targetCell.classList.add('hit');
@@ -319,11 +317,7 @@ const ui = (() => {
                 state.targetCell.classList.add('miss');
             }
         } else if (player === 'human') {
-            console.log(playerBoards[0]);
-            console.log(coord);
-            // let target = playerBoards[0].getElementById(coord);
-            let target = document.getElementById(`${coord}`);
-            console.log(target);
+            let target = document.getElementById(coord);
             if (hit) {
                 target.classList.add('hit');
             } else if (!hit) {
