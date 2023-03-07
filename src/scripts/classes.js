@@ -162,6 +162,8 @@ class Gameboard {
             ship.logHit();
             if (ship.sunk) {
                 this.shipsSunk += 1;
+                console.log(ship);
+                events.publish('displaySunk', player, ship.length, ship.name); // subscribed by ui.js
             }
         } else if (!hit) {
             this.markBoard(coord, 'o');
@@ -210,11 +212,19 @@ class Computer extends Human {
     }
 
     randomizeShips() {
-        let availShips = [1, 1, 2, 2, 3, 4, 5];
+        let availShips = [[1, 'sub1'],
+                          [1, 'sub2'],
+                          [2, 'dest1'],
+                          [2, 'dest2'],
+                          [3, 'crus'],
+                          [4, 'bs'],
+                          [5, 'acc'],
+                        ];
         let dirs = ['u', 'd', 'l', 'r'];
         
         while (availShips.length > 0) {
-            let shipLen = availShips[0];
+            let shipLen = availShips[0][0];
+            let shipName = availShips[0][1];
             availShips.splice(0, 1);
 
             let dir = dirs[Math.floor(Math.random() * dirs.length)];
@@ -228,9 +238,10 @@ class Computer extends Human {
                     coord += index;
                     i++;
                 }
-                valid = this.board.placeShip(coord, dir, shipLen);
+                valid = this.board.placeShip(coord, dir, shipLen, shipName);
             }
         }
+        console.log(this.board.ships)
     }
     randomizeAttack(board) {
         let valid = false;

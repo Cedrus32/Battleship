@@ -325,12 +325,24 @@ const ui = (() => {
             }
         }
     }
+    function displaySunk(player, length, name) {
+        console.log(player, length, name);
+        if (player === 'human') {
+            player = 'h';
+        } else if (player === 'computer') {
+            player = 'c';
+        }
+        let ship = document.getElementById(`${player}-${name}`);
+        console.log(ship);
+        ship.classList.add('sunk');
+    }
 
     // event subscriptions
     events.subscribe('receiveCoordData', setBoardHover); // published by game.js (queryCoordData)
     events.subscribe('receiveShipData', replaceShipUI); // published by game.js (queryShipData, replaceToOriginal)
     events.subscribe('makePlayLive', makePlayLive); // published by classes.js (gameboard.placeShip)
     events.subscribe('displayHit', displayHit); // published by classes.js (gameboard.receiveAttack)
+    events.subscribe('displaySunk', displaySunk); // published by classes.js (gameboard.receiveAttack)
 
     return {
         init, // used by index.js

@@ -8,7 +8,8 @@ const game = (() => {
     // driver methods
     function init() {
         human = makePlayer('human');
-        computer = makePlayer('computer');  
+        computer = makePlayer('computer');
+        console.log(computer);
     }
 
     // placement methods
