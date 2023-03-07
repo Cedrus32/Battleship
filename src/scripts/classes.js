@@ -153,7 +153,7 @@ class Gameboard {
         return true;
     }
 
-    receiveAttack(coord) {
+    receiveAttack(player, coord) {
         let outcome = this.isHit(coord);
         let hit = outcome[0];
         let ship = outcome[1];
@@ -166,6 +166,7 @@ class Gameboard {
         } else if (!hit) {
             this.markBoard(coord, 'o');
         }
+        events.publish('displayHit', player, coord, hit); // subscribed by ui.js
     }
     isHit(attackCoord) {
         for (let i = 0; i < this.ships.length; i++) {
@@ -197,8 +198,8 @@ class Human {
         this.board = makeGameboard();
     }
 
-    sendAttack(coord, board) {
-        board.receiveAttack(coord);
+    sendAttack(player, coord, board) {
+        board.receiveAttack(player, coord);
     }
 }
 class Computer extends Human {
@@ -244,7 +245,7 @@ class Computer extends Human {
             if (!this.attacksMade.includes(coord)) {
                 valid = true;
                 this.attacksMade.push(coord);
-                this.sendAttack(coord, board)
+                this.sendAttack('human', coord, board)
             }
         }
     }

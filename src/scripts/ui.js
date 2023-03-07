@@ -42,8 +42,9 @@ const ui = (() => {
                 console.log('clear and restart game')
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
                 console.log('close box');
-            } else if (e.target.classList.contains('cell') && e.target.parentElement.parentElement.parentElement.id === 'computer') {
-                console.log('send attack');
+            } else if (e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
+                state.targetCell = e.target;
+                events.publish('takeTurn', e.target.id); // subscribed by game.js
             }
         }
     });
@@ -83,13 +84,11 @@ const ui = (() => {
         }   
     })
     playerBoards[1].addEventListener('mouseover', (e) => {
-        // e.target.classList.add('attack');
         if (state.playing) {
             e.target.classList.add('attack');
         }
     })
     playerBoards[1].addEventListener('mouseout', (e) => {
-        // e.target.classList.remove('attack');
         if (state.playing) {
             e.target.classList.remove('attack');
         }
@@ -310,11 +309,34 @@ const ui = (() => {
             container.removeChild(container.lastElementChild);
         }
     }
+    function displayHit(player, coord, hit) {
+        // ! sort out what player is referencing --> target player or originating player
+        console.log(player, coord, hit);
+        if (player === 'computer') {
+            if (hit) {
+                state.targetCell.classList.add('hit');
+            } else if (!hit) {
+                state.targetCell.classList.add('miss');
+            }
+        } else if (player === 'human') {
+            console.log(playerBoards[0]);
+            console.log(coord);
+            // let target = playerBoards[0].getElementById(coord);
+            let target = document.getElementById(`${coord}`);
+            console.log(target);
+            if (hit) {
+                target.classList.add('hit');
+            } else if (!hit) {
+                target.classList.add('miss');
+            }
+        }
+    }
 
     // event subscriptions
     events.subscribe('receiveCoordData', setBoardHover); // published by game.js (queryCoordData)
     events.subscribe('receiveShipData', replaceShipUI); // published by game.js (queryShipData, replaceToOriginal)
     events.subscribe('makePlayLive', makePlayLive); // published by classes.js (gameboard.placeShip)
+    events.subscribe('displayHit', displayHit); // published by classes.js (gameboard.receiveAttack)
 
     return {
         init, // used by index.js

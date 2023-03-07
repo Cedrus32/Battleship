@@ -5,11 +5,13 @@ const game = (() => {
     let human;
     let computer;
 
+    // driver methods
     function init() {
         human = makePlayer('human');
         computer = makePlayer('computer');  
     }
 
+    // placement methods
     function queryCoordData(startCoord, direction, length) {
         let coordSet = human.board.getCoords(startCoord, direction, length);
         let isValid = human.board.setIsValid(coordSet);
@@ -34,8 +36,13 @@ const game = (() => {
         events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
     }
 
+    // play methods
     function generateComputerShips() {
         computer.randomizeShips();
+    }
+    function takeTurn(targetCoord) {
+        human.sendAttack('computer', targetCoord, computer.board);
+        computer.randomizeAttack(human.board);
     }
 
     // event subscriptions
@@ -46,6 +53,7 @@ const game = (() => {
     events.subscribe('clearShipData', clearShipData); // published by ui.js (body.onClick)
     events.subscribe('replaceToOriginal', replaceToOriginal); // published by ui.js (body.onClick)
     events.subscribe('generateComputerShips', generateComputerShips); // published by ui.js (body.onClick)
+    events.subscribe('takeTurn', takeTurn); // published by ui.js (body.onClick)
 
     return {
         init, // used by index.js
