@@ -66,6 +66,7 @@ class Gameboard {
         }
     }
     placeShip(startCoord, dir, shipLen, shipName) {
+        shipLen = parseInt(shipLen);
         let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
         if (this.setIsValid(coordSet)) {    // used by computer AI to varifyplacement validity
             this.ships.push(makeShip(shipLen, dir, shipName, coordSet));
@@ -79,8 +80,6 @@ class Gameboard {
     replaceShipToOriginal() {
         this.ships.push(this.replacing);
         this.replacing = undefined;
-        console.log(this.ships);
-        console.log(this.replacing);
     }
     getCoords(startCoord, dir, shipLen) {
         let coordSet = [startCoord];
@@ -162,7 +161,6 @@ class Gameboard {
             ship.logHit();
             if (ship.sunk) {
                 this.shipsSunk += 1;
-                console.log(ship);
                 events.publish('displaySunk', player, ship.length, ship.name); // subscribed by ui.js
             }
         } else if (!hit) {
@@ -241,7 +239,6 @@ class Computer extends Human {
                 valid = this.board.placeShip(coord, dir, shipLen, shipName);
             }
         }
-        console.log(this.board.ships)
     }
     randomizeAttack(board) {
         let valid = false;

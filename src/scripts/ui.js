@@ -326,14 +326,12 @@ const ui = (() => {
         }
     }
     function displaySunk(player, length, name) {
-        console.log(player, length, name);
         if (player === 'human') {
             player = 'h';
         } else if (player === 'computer') {
             player = 'c';
         }
         let ship = document.getElementById(`${player}-${name}`);
-        console.log(ship);
         ship.classList.add('sunk');
     }
 
