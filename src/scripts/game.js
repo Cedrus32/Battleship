@@ -27,9 +27,11 @@ const game = (() => {
     function deleteShipObject(targetName) {
         human.board.removeShip(targetName);
     }
-    function clearShipData() {
-        human.board.clearShips();
-        computer.board.clearShips();
+    function resetBoardData() {
+        human.board.resetBoard();
+        computer.board.resetBoard();
+        console.log(human.board)
+        console.log(computer.board);
     }
     function replaceToOriginal() {
         let ship = human.board.replacing;
@@ -43,7 +45,13 @@ const game = (() => {
     }
     function takeTurn(targetCoord) {
         human.sendAttack('computer', targetCoord, computer.board);
+        if (human.board.isLoser()) {
+            events.publish('winner', 'computer'); // subscribed by ui.js
+        }
         computer.randomizeAttack(human.board);
+        if (computer.board.isLoser()) {
+            events.publish('winner', 'human'); // subscribed by ui.js
+        }
     }
 
     // event subscriptions
@@ -51,7 +59,7 @@ const game = (() => {
     events.subscribe('placeShip', placeShip); // published by ui.js (body.onClick)
     events.subscribe('queryShipData', queryShipData); // published by ui.js (body.onClick)
     events.subscribe('deleteShipObject', deleteShipObject); // published by ui.js (body.onClick)
-    events.subscribe('clearShipData', clearShipData); // published by ui.js (body.onClick)
+    events.subscribe('resetBoardData', resetBoardData); // published by ui.js (body.onClick)
     events.subscribe('replaceToOriginal', replaceToOriginal); // published by ui.js (body.onClick)
     events.subscribe('generateComputerShips', generateComputerShips); // published by ui.js (body.onClick)
     events.subscribe('takeTurn', takeTurn); // published by ui.js (body.onClick)

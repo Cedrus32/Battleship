@@ -22,7 +22,9 @@ const ui = (() => {
             if (e.target.id === 'play-game' || e.target.id === 'play') {
                 play();
             } else if (e.target.id === 'restart-game' || e.target.id === 'restart') {
+                console.log('restart game');
                 restart();
+                removeAlertBox();
             } else if (e.target.parentElement.parentElement.classList.contains('menu') && !e.target.parentElement.classList.contains('placed')) {
                 setMenuSelect(e.target.parentElement);
             } else if (e.target.classList.contains('cell')) {
@@ -39,8 +41,8 @@ const ui = (() => {
             if (e.target.id === 'restart-game' || e.target.id === 'restart') {
                 generateAlertBox();
             } else if (e.target.id === 'confirm-restart' || e.target.id === 'confirm') {
-                removeAlertBox();
                 restart();
+                removeAlertBox();
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
                 removeAlertBox();
             } else if (e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
@@ -159,7 +161,7 @@ const ui = (() => {
         playButton.disabled = true;
         playButton.ariaDisabled = true;
         // clear player objects
-        events.publish('clearShipData', ''); // subscribed by game.js
+        events.publish('resetBoardData', ''); // subscribed by game.js
         // clear state
         state.placing = false;
         state.playing = false;
@@ -361,7 +363,31 @@ const ui = (() => {
     }
     function removeAlertBox() {
         let alertBox = document.getElementById('alert');
-        alertBox.parentElement.removeChild(alertBox);
+        if (alertBox !== null) {
+            alertBox.parentElement.removeChild(alertBox);
+        }
+    }
+
+    // end game
+    function endGame(player) {
+        state.playing = false;
+        generateGameResult(player);
+    }
+    function generateGameResult(player) {
+        let mainContainer = create.div('', '#alert');
+        let text;
+        if (player === 'human') {
+            text = 'You win! =D';
+        } else {
+            text = "Computer wins. ='(";
+        }
+        let textSpan = create.span(text);
+        mainContainer.appendChild(textSpan);
+        let restartButton = create.button('', `restart`, `#restart-game`);
+        let restartImage = create.img(`./icons/restart.svg`, `restart`, `#restart`);
+        restartButton.appendChild(restartImage);
+        mainContainer.appendChild(restartButton);
+        body.appendChild(mainContainer);
     }
 
     // event subscriptions
@@ -370,6 +396,7 @@ const ui = (() => {
     events.subscribe('makePlayLive', makePlayLive); // published by classes.js (gameboard.placeShip)
     events.subscribe('displayHit', displayHit); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('displaySunk', displaySunk); // published by classes.js (gameboard.receiveAttack)
+    events.subscribe('winner', endGame); // published by game.js (takeTurn)
 
     return {
         init, // used by index.js

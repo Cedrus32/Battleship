@@ -60,11 +60,26 @@ class Gameboard {
             }
         }
     }
+
+    resetBoard() {
+        this.clearShips();
+        this.clearBoard();
+        this.replacing = undefined;
+        this.shipsSunk = 0;
+    }
     clearShips() {
         while (this.ships.length > 0) {
             this.ships.pop();
         }
     }
+    clearBoard() {
+        for (let i = 0; i < this.grid.length; i++) {
+            for (let j = 0; j < this.grid[i].length; j++) {
+                this.grid[i][j] = [];
+            }
+        }
+    }
+
     placeShip(startCoord, dir, shipLen, shipName) {
         shipLen = parseInt(shipLen);
         let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
