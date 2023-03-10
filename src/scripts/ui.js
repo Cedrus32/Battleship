@@ -18,6 +18,7 @@ const ui = (() => {
 
     // event listeners
     body.addEventListener('click', (e) => {
+        console.log(e);
         if (state.playing === false) {
             if (e.target.id === 'play-game' || e.target.id === 'play') {
                 play();
@@ -37,12 +38,12 @@ const ui = (() => {
             }
         } else if (state.playing === true) {
             if (e.target.id === 'restart-game' || e.target.id === 'restart') {
-                console.log('TODO display box')
-                restart();
+                generateAlertBox(); // ! DOING
             } else if (e.target.id === 'confirm-restart' || e.target.id === 'confirm') {
-                console.log('clear and restart game')
+                console.log('remove alert box');
+                restart();
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
-                console.log('close box');
+                console.log('remove alert box');
             } else if (e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
                 state.targetCell = e.target;
                 events.publish('takeTurn', e.target.id); // subscribed by game.js
@@ -343,6 +344,21 @@ const ui = (() => {
         }
         let ship = document.getElementById(`${player}-${name}`);
         ship.classList.add('sunk');
+    }
+    function generateAlertBox() {
+        let options = ['cancel', 'confirm'];
+        let mainContainer = create.div('', '#alert');
+        let text = create.span('Restart game?');
+        mainContainer.appendChild(text);
+        let buttonContainer = create.div('');
+        for (let i = 0; i < options.length; i++) {
+            let button = create.button('', `${options[i]}`, `#${options[i]}-restart`);
+            let image = create.img(`./icons/${options[i]}.svg`, `${options[i]}`, `#${options[i]}`);
+            button.appendChild(image);
+            buttonContainer.append(button);
+        }
+        mainContainer.appendChild(buttonContainer);
+        body.appendChild(mainContainer);
     }
 
     // event subscriptions

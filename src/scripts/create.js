@@ -24,6 +24,31 @@ const create = (() => {
         _attributes = [];
         return element;
     }
+    const button = function(content, state, ...args) {
+        _attributes = [...args];
+        element = document.createElement('button');
+        if (_attributes.length > 0) {
+            _setAttributes(element, _attributes);
+        }
+        element.type = 'button';
+        element.role = 'button';
+        element.textContent = content;
+        element.value = state;
+        element.ariaPressed = 'false';
+        _attributes = [];
+        return element;
+    }
+    const img = function(url, alt, ...args) {
+        _attributes = [...args];
+        element = document.createElement('img');
+        if (_attributes.length > 0) {
+            _setAttributes(element, _attributes);
+        }
+        // element.src = `../${url}`;
+        element.src = url;
+        element.alt = alt;
+        return element;
+    }
     const p = function(content, ...args) {
         _attributes = [...args];
         element = document.createElement('p');
@@ -125,31 +150,6 @@ const create = (() => {
         _attributes = [];
         return element;
     }
-    const img = function(url, alt, ...args) {
-        _attributes = [...args];
-        element = document.createElement('img');
-        if (_attributes.length > 0) {
-            _setAttributes(element, _attributes);
-        }
-        // element.src = `../${url}`;
-        element.src = url;
-        element.alt = alt;
-        return element;
-    }
-    const button = function(content, state, ...args) {
-        _attributes = [...args];
-        element = document.createElement('button');
-        if (_attributes.length > 0) {
-            _setAttributes(element, _attributes);
-        }
-        element.type = 'button';
-        element.role = 'button';
-        element.textContent = content;
-        element.value = state;
-        element.ariaPressed = 'false';
-        _attributes = [];
-        return element;
-    }
 
     // helpers
     function _setAttributes(element, attributes) {
@@ -165,6 +165,8 @@ const create = (() => {
     return {
         div,
         span,
+        button,
+        img,
     }
 })();
 
