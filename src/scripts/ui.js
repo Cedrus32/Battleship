@@ -22,7 +22,6 @@ const ui = (() => {
             if (e.target.id === 'play-game' || e.target.id === 'play') {
                 play();
             } else if (e.target.id === 'restart-game' || e.target.id === 'restart') {
-                console.log('restart game');
                 restart();
                 removeAlertBox();
             } else if (e.target.parentElement.parentElement.classList.contains('menu') && !e.target.parentElement.classList.contains('placed')) {
@@ -112,14 +111,11 @@ const ui = (() => {
     }
     function play() {
         // replace selected ship to original coords
-        //// console.log('start replaceToOriginal event')
         if (state.placing === true) {
             events.publish('replaceToOriginal', ''); // subscribed by game.js
             placeShipUI();
         }
-        //// console.log('finish replaceToOriginal event')
         // generate ship tallies
-        //// console.log('start generating ship tallies');
         let i = 0;
         while (i < shipContainers.length) {
             clearShipContainer(shipContainers[i]);
@@ -127,16 +123,11 @@ const ui = (() => {
             generateShipTallies(shipContainers[i], i);
             i++;
         }
-        //// console.log('finish generating ship tallies');
         // ask computer board to generate placements
-        //// console.log('start generating computer ships');
         events.publish('generateComputerShips', ''); // subscribed by game.js
-        //// console.log('finish generating computer ships');
         // set state to play
-        //// console.log('start setting state to play');
         state.placing = false;
         state.playing = true;
-        //// console.log('finish setting state to play');
     }
     function restart() {
         // reset boards

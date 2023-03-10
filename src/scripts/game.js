@@ -30,8 +30,6 @@ const game = (() => {
     function resetBoardData() {
         human.board.resetBoard();
         computer.board.resetBoard();
-        console.log(human.board)
-        console.log(computer.board);
     }
     function replaceToOriginal() {
         let ship = human.board.replacing;
