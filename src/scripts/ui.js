@@ -18,7 +18,6 @@ const ui = (() => {
 
     // event listeners
     body.addEventListener('click', (e) => {
-        console.log(e);
         if (state.playing === false) {
             if (e.target.id === 'play-game' || e.target.id === 'play') {
                 play();
@@ -38,12 +37,12 @@ const ui = (() => {
             }
         } else if (state.playing === true) {
             if (e.target.id === 'restart-game' || e.target.id === 'restart') {
-                generateAlertBox(); // ! DOING
+                generateAlertBox();
             } else if (e.target.id === 'confirm-restart' || e.target.id === 'confirm') {
-                console.log('remove alert box');
+                removeAlertBox();
                 restart();
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
-                console.log('remove alert box');
+                removeAlertBox();
             } else if (e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
                 state.targetCell = e.target;
                 events.publish('takeTurn', e.target.id); // subscribed by game.js
@@ -359,6 +358,10 @@ const ui = (() => {
         }
         mainContainer.appendChild(buttonContainer);
         body.appendChild(mainContainer);
+    }
+    function removeAlertBox() {
+        let alertBox = document.getElementById('alert');
+        alertBox.parentElement.removeChild(alertBox);
     }
 
     // event subscriptions
