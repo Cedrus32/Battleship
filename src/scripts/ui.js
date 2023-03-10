@@ -37,7 +37,8 @@ const ui = (() => {
             }
         } else if (state.playing === true) {
             if (e.target.id === 'restart-game' || e.target.id === 'restart') {
-                console.log('display box')
+                console.log('TODO display box')
+                restart();
             } else if (e.target.id === 'confirm-restart' || e.target.id === 'confirm') {
                 console.log('clear and restart game')
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
@@ -109,11 +110,14 @@ const ui = (() => {
     }
     function play() {
         // replace selected ship to original coords
+        //// console.log('start replaceToOriginal event')
         if (state.placing === true) {
             events.publish('replaceToOriginal', ''); // subscribed by game.js
             placeShipUI();
         }
+        //// console.log('finish replaceToOriginal event')
         // generate ship tallies
+        //// console.log('start generating ship tallies');
         let i = 0;
         while (i < shipContainers.length) {
             clearShipContainer(shipContainers[i]);
@@ -121,38 +125,44 @@ const ui = (() => {
             generateShipTallies(shipContainers[i], i);
             i++;
         }
+        //// console.log('finish generating ship tallies');
         // ask computer board to generate placements
+        //// console.log('start generating computer ships');
         events.publish('generateComputerShips', ''); // subscribed by game.js
+        //// console.log('finish generating computer ships');
         // set state to play
+        //// console.log('start setting state to play');
         state.placing = false;
         state.playing = true;
+        //// console.log('finish setting state to play');
     }
     function restart() {
         // reset boards
-        for (let i = 0; i < playerBoards[0].children.length; i++) {
-            for (let j = 0; j < playerBoards[0].children[i].children.length; j++) {
-                if (playerBoards[0].children[i].children[j].classList.length > 1) {
-                    playerBoards[0].children[i].children[j].classList = 'cell';
+        for (let i = 0; i < playerBoards.length; i++) {
+            for (let j = 0; j < playerBoards[i].children.length; j++) {
+                for (let k = 0; k < playerBoards[i].children[j].children.length; k++) {
+                    if (playerBoards[i].children[j].children[k].classList.length > 1) {
+                        playerBoards[i].children[j].children[k].classList = 'cell';
+                    }
                 }
-            }
+            }   
         }
-        // ! add computer board
         // reset menus
-        for (let i = 0; i < shipContainers[0].children.length; i++) {
-            if (shipContainers[0].children[i].classList.contains('placed')) {
-                shipContainers[0].children[i].classList.remove('placed');
-            }
+        for (let i = 0; i < shipContainers.length; i++) {
+            clearShipContainer(shipContainers[i]);
         }
-        // ! add computer menu
+        makeShipIcons('', shipContainers[0]);
+        shipContainers[0].classList = 'menu';
+        shipContainers[1].classList = '';
         // reset play button
         playButton.children[0].src = './icons/play_gray.svg';
         playButton.disabled = true;
         playButton.ariaDisabled = true;
         // clear player objects
         events.publish('clearShipData', ''); // subscribed by game.js
-        // ! add computer object
         // clear state
         state.placing = false;
+        state.playing = false;
         state.targetCell = undefined;
         state.selectedShip = undefined;
         state.coordData = undefined;

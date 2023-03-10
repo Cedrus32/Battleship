@@ -80,13 +80,14 @@ body {
         gap: var(--main-spacing);
     }
 
-        .menu {
+        .menu,
+        .tally {
             gap: var(--sidebar-spacing);
         }
 
-        .tally {
+        /* .tally {
             gap: calc(var(--sidebar-spacing) / 2);
-        }
+        } */
 
     #alert {
         position: absolute;
@@ -124,15 +125,16 @@ body {
             }
 
                 .menu .ship div,
+                .tally .ship div,
                 .cell .ship div {
                     height: var(--ship-cell);
                     width: var(--ship-cell);
                 }
 
-                .tally .ship div {
+                /* .tally .ship div {
                     height: calc(var(--ship-cell) / 2);
                     width: calc(var(--ship-cell) / 2);
-                }
+                } */
 
         .cell {
             height: var(--board-cell);

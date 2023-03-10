@@ -29,6 +29,7 @@ const game = (() => {
     }
     function clearShipData() {
         human.board.clearShips();
+        computer.board.clearShips();
     }
     function replaceToOriginal() {
         let ship = human.board.replacing;
