@@ -49,16 +49,6 @@ const create = (() => {
         element.alt = alt;
         return element;
     }
-    const p = function(content, ...args) {
-        _attributes = [...args];
-        element = document.createElement('p');
-        if (_attributes.length > 0) {
-            _setAttributes(element, _attributes);
-        }
-        element.textContent = content;
-        _attributes = [];
-        return element;
-    }
 
     // helpers
     function _setAttributes(element, attributes) {
