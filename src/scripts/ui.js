@@ -3,7 +3,7 @@ import create from './create.js';
 
 const ui = (() => {
     let playerBoards = [document.getElementById('human').lastElementChild, document.getElementById('computer').lastElementChild];
-    let shipContainers = [document.getElementById('human').firstElementChild, document.getElementById('computer').firstElementChild];
+    let shipContainers = [document.getElementById('human').children[1], document.getElementById('computer').children[1]];
     let playButton = document.getElementById('play-game');
     let body = document.querySelector('body');
 
