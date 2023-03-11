@@ -174,7 +174,7 @@ body {
 }
 
 body {
-    background-color: var(--main-light);
+    background-color: #b1c6eb;
 }
 
     .ship div,
@@ -182,20 +182,30 @@ body {
         border-radius: 10%;
     }
 
-    .cell {
-        border: var(--main-dark) 1px solid;
+    .cell,
+    .cell.attack:not(.cell.hit),
+    .cell.attack:not(.cell.miss) {
+        border: blue 1px solid;
+    }
+
+    .cell.attack:not(.cell.hit),
+    .cell.attack:not(.cell.miss) {
+        opacity: 25%;
     }
 
     .menu .ship div,
-    .cell.placed {
-        background-color: var(--main-dark);
+    .cell.placed,
+    .ship.selected div,
+    .ship.placed div,
+    .hover.is-valid,
+    .tally .ship div {
+        background-color: blue;
     }
 
     .ship.selected div,
     .ship.placed div,
     .hover.is-valid,
     .tally .ship div {
-        background-color: var(--main-dark);
         opacity: 50%;
     }
 
@@ -206,21 +216,20 @@ body {
     }
 
     .hover.is-invalid,
-    .sunk div {
+    .sunk div,
+    .hit {
         background-color: red !important;
         opacity: 50%;
         border-color: red;
     }
 
-    .hit {
-        background-color: red !important;
-        opacity: 75%;
-        border-color: red;
+    .hover.is-valid,
+    .sunk div {
+        opacity: 50%;
     }
 
-    .cell.attack:not(.cell.hit),
-    .cell.attack:not(.cell.miss) {
-        border-color: rgba(0, 0, 255, 0.25);
+    .hit {
+        opacity: 75%;
     }
 
 #alert {
