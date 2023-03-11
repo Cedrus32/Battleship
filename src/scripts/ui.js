@@ -44,7 +44,7 @@ const ui = (() => {
                 removeAlertBox();
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
                 removeAlertBox();
-            } else if (e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
+            } else if (e.target.parentElement.parentElement.parentElement !== null && e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
                 e.target.classList.remove('attack');
                 state.targetCell = e.target;
                 events.publish('takeTurn', e.target.id); // subscribed by game.js
@@ -353,11 +353,15 @@ const ui = (() => {
             buttonContainer.append(button);
         }
         mainContainer.appendChild(buttonContainer);
-        body.appendChild(mainContainer);
+        let screen = create.div('', '.screen');
+        body.append(screen, mainContainer);
     }
     function removeAlertBox() {
+        console.log('enter removeAlertBox()');
+        let screen = document.querySelector('.screen');
         let alertBox = document.getElementById('alert');
-        if (alertBox !== null) {
+        if (alertBox !== null && screen !== null) {
+            screen.parentElement.removeChild(screen);
             alertBox.parentElement.removeChild(alertBox);
         }
     }
@@ -381,7 +385,8 @@ const ui = (() => {
         let restartImage = create.img(`./icons/restart.svg`, `restart`, `#restart`);
         restartButton.appendChild(restartImage);
         mainContainer.appendChild(restartButton);
-        body.appendChild(mainContainer);
+        let screen = create.div('', '.screen')
+        body.append(screen, mainContainer);
     }
 
     // event subscriptions
