@@ -167,8 +167,14 @@ body {
 
 /* COLORS & SHAPING */
 
+:root {
+    --main-light: #b1c6eb;
+    --main-dark: blue;
+    --error: red;
+}
+
 body {
-    background-color: blue;
+    background-color: var(--main-light);
 }
 
     .ship div,
@@ -177,30 +183,44 @@ body {
     }
 
     .cell {
-        border: rgba(177, 198, 235, 0.75) 1px solid;
+        border: var(--main-dark) 1px solid;
     }
 
     .menu .ship div,
     .cell.placed {
-        background-color: #b1c6eb;
+        background-color: var(--main-dark);
     }
 
     .ship.selected div,
     .ship.placed div,
     .hover.is-valid,
-    .tally .ship div,
+    .tally .ship div {
+        background-color: var(--main-dark);
+        opacity: 50%;
+    }
+
     .miss {
-        background-color: rgba(177, 198, 235, 0.75);
+        background-color: rgba(0, 0, 131);
+        opacity: 15%;
+        border-color: rgba(0, 0, 131);
     }
 
     .hover.is-invalid,
-    .hit,
-    .sunk {
-        background-color: rgba(231, 172, 242, 0.75);
+    .sunk div {
+        background-color: red !important;
+        opacity: 50%;
+        border-color: red;
     }
 
-    .attack {
-        background-color: rgba(202, 173, 93, 0.75);
+    .hit {
+        background-color: red !important;
+        opacity: 75%;
+        border-color: red;
+    }
+
+    .cell.attack:not(.cell.hit),
+    .cell.attack:not(.cell.miss) {
+        border-color: rgba(0, 0, 255, 0.25);
     }
 
 #alert {

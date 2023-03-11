@@ -45,6 +45,7 @@ const ui = (() => {
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
                 removeAlertBox();
             } else if (e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
+                e.target.classList.remove('attack');
                 state.targetCell = e.target;
                 events.publish('takeTurn', e.target.id); // subscribed by game.js
             }
@@ -86,12 +87,14 @@ const ui = (() => {
         }   
     })
     playerBoards[1].addEventListener('mouseover', (e) => {
-        if (state.playing) {
-            e.target.classList.add('attack');
+        if (state.playing && e.target.classList.contains('cell')) {
+            if (e.target.classList.length === 1) {
+                e.target.classList.add('attack');
+            }
         }
     })
     playerBoards[1].addEventListener('mouseout', (e) => {
-        if (state.playing) {
+        if (state.playing && e.target.classList.contains('cell') && e.target.classList.contains('attack')) {
             e.target.classList.remove('attack');
         }
     })
