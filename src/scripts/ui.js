@@ -342,9 +342,9 @@ const ui = (() => {
     }
     function generateAlertBox() {
         let options = ['cancel', 'confirm'];
-        let mainContainer = create.div('', '#alert');
+        let alertContainer = create.div('', '#alert');
         let text = create.span('Restart game?');
-        mainContainer.appendChild(text);
+        alertContainer.appendChild(text);
         let buttonContainer = create.div('');
         for (let i = 0; i < options.length; i++) {
             let button = create.button('', `${options[i]}`, `#${options[i]}-restart`);
@@ -352,9 +352,9 @@ const ui = (() => {
             button.appendChild(image);
             buttonContainer.append(button);
         }
-        mainContainer.appendChild(buttonContainer);
+        alertContainer.appendChild(buttonContainer);
         let screen = create.div('', '.screen');
-        body.append(screen, mainContainer);
+        body.append(screen, alertContainer);
     }
     function removeAlertBox() {
         console.log('enter removeAlertBox()');
@@ -372,7 +372,7 @@ const ui = (() => {
         generateGameResult(player);
     }
     function generateGameResult(player) {
-        let mainContainer = create.div('', '#alert');
+        let alertContainer = create.div('', '#alert');
         let text;
         if (player === 'human') {
             text = 'You win! =D';
@@ -380,13 +380,13 @@ const ui = (() => {
             text = "Computer wins. ='(";
         }
         let textSpan = create.span(text);
-        mainContainer.appendChild(textSpan);
+        alertContainer.appendChild(textSpan);
         let restartButton = create.button('', `restart`, `#restart-game`);
         let restartImage = create.img(`./icons/restart.svg`, `restart`, `#restart`);
         restartButton.appendChild(restartImage);
-        mainContainer.appendChild(restartButton);
+        alertContainer.appendChild(restartButton);
         let screen = create.div('', '.screen')
-        body.append(screen, mainContainer);
+        body.append(screen, alertContainer);
     }
 
     // event subscriptions
