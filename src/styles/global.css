@@ -165,61 +165,44 @@ body {
                 width: auto;
             }
 
-/* COLORS */
+/* COLORS & SHAPING */
 
-main {
-    background-color: white;
+body {
+    background-color: blue;
 }
 
-    #human,
-    #computer {
-        background-color: rgba(255, 0, 0, 0.3);  /* ! testing */
+    .ship div,
+    .cell {
+        border-radius: 10%;
     }
 
-        .ship,
-        .cell.placed {
-            background-color: blue;
-        }
+    .cell {
+        border: rgba(177, 198, 235, 0.75) 1px solid;
+    }
 
-        .selected,
-        .hover.is-valid {
-            background-color: rgba(0, 0, 255, 0.5);
-        }
+    .menu .ship div,
+    .cell.placed {
+        background-color: #b1c6eb;
+    }
 
-        .hover.is-invalid {
-            background-color: rgba(255, 0, 0, 0.5);
-        }
+    .ship.selected div,
+    .ship.placed div,
+    .hover.is-valid,
+    .tally .ship div,
+    .miss {
+        background-color: rgba(177, 198, 235, 0.75);
+    }
 
-        .ship.placed {
-            background-color: rgba(128, 128, 128, 0.5);
-        }
+    .hover.is-invalid,
+    .hit,
+    .sunk {
+        background-color: rgba(231, 172, 242, 0.75);
+    }
 
-        .cell {
-            border: green 1px solid; /* ! testing */
-        }
-
-        .attack {
-            background-color: rgba(255, 165, 0, 0.5);
-        }
-
-        #human .hit,
-        #human .sunk {
-            background-color: rgba(255, 0, 0, 0.5);
-        }
-
-        #computer .hit,
-        #computer .sunk {
-            background-color: rgba(0, 128, 0, 0.5);
-        }
-
-        .miss {
-            background-color: rgba(128, 128, 128, 0.5);
-        }
+    .attack {
+        background-color: rgba(202, 173, 93, 0.75);
+    }
 
 #alert {
     background-color: rgba(128, 0, 128, 0.3);
-}
-
-footer {
-    background-color: rgba(255, 166, 0.3);   /* ! testing */
 }
