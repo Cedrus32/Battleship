@@ -76,12 +76,12 @@ const ui = (() => {
     })
     playerBoards[0].addEventListener('mouseover', (e) => {
         state.targetCell = e.target;
-        if (state.placing && !state.playing) {
+        if (state.placing && !state.playing && e.target.classList.contains('cell')) {
             events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     });
-    playerBoards[0].addEventListener('mouseout', () => {
-        if (state.placing && !state.playing) {
+    playerBoards[0].addEventListener('mouseout', (e) => {
+        if (state.placing && !state.playing && e.target.classList.contains('cell')) {
             removeCellHover();
         }   
     })
