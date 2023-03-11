@@ -3,13 +3,14 @@
 :root {
     --main-spacing: 2vw;
     --player-area: calc(calc(100vw - calc(var(--main-spacing) * 4)) / 2);
-    --player-fr: calc(var(--player-area) / 15);
+    --player-fr: calc(var(--player-area) / 16); /* 15 for 10+5 cells ++ 1 to /13 for cell gaps */
+    --cell-gap: calc(var(--player-fr) / 13);
 
     --sidebar-spacing: calc(var(--main-spacing) / 2);
-    --sidebar-area: calc(var(--sidebar-spacing) + calc(var(--player-fr) * 5));
+    --sidebar-area: calc(var(--sidebar-spacing) + calc(var(--player-fr) * 5) + calc(var(--cell-gap) * 4));
     --ship-cell: var(--player-fr);
 
-    --board-area: calc(var(--player-fr) * 10);
+    --board-area: calc(calc(var(--player-fr) * 10) + calc(var(--cell-gap) * 9));
     --board-cell: var(--player-fr);
 }
 
@@ -85,9 +86,11 @@ body {
             gap: var(--sidebar-spacing);
         }
 
-        /* .tally {
-            gap: calc(var(--sidebar-spacing) / 2);
-        } */
+            .ship,
+            .board,
+            .row {
+                gap: var(--cell-gap);
+            }
 
     #alert {
         position: absolute;
@@ -97,6 +100,7 @@ body {
 
     footer {
         justify-content: center;
+        gap: calc(var(--main-spacing) / 2);
     }
 
 /* SIZING */
