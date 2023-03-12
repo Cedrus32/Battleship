@@ -81,7 +81,6 @@ class Gameboard {
     }
 
     placeShip(startCoord, dir, shipLen, shipName) {
-        shipLen = parseInt(shipLen);
         let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
         if (this.setIsValid(coordSet)) {    // used by computer AI to varifyplacement validity
             this.ships.push(makeShip(shipLen, dir, shipName, coordSet));
@@ -97,6 +96,8 @@ class Gameboard {
         this.replacing = undefined;
     }
     getCoords(startCoord, dir, shipLen) {
+        shipLen = parseInt(shipLen);
+        console.log(startCoord, dir, shipLen);
         let coordSet = [startCoord];
         let i = 0;
         switch (dir) {
@@ -147,8 +148,10 @@ class Gameboard {
         return coordSet;
     }
     setIsValid(coordSet) {
+        console.log(coordSet);
         for (let i = 0; i < coordSet.length; i++) {
             if (coordSet[i].length > 2) {
+                console.log(`${coordSet[i]} outside bounds`);
                 return false;
             }
             let newX = parseInt(coordSet[i].split('')[0]);
@@ -160,10 +163,12 @@ class Gameboard {
                 let yMin = parseInt(ship.coords[0].split('')[1]) - 1;
                 let yMax = parseInt(ship.coords[ship.coords.length - 1].split('')[1]) + 1
                 if (newX >= xMin && newX <= xMax && newY >= yMin && newY <= yMax) {
+                    console.log(`${coordSet[i]} too close to placed ship`);
                     return false
                 }
             }
         }
+        console.log('valid set');
         return true;
     }
 
@@ -176,7 +181,9 @@ class Gameboard {
             ship.logHit();
             if (ship.sunk) {
                 this.shipsSunk += 1;
-                events.publish('displaySunk', player, ship.length, ship.name); // subscribed by ui.js
+                let buffer = this.getBuffer(ship);
+                events.publish('displayBuffer', player, buffer); // subscribed by ui.js
+                events.publish('displaySunk', player, ship.name); // subscribed by ui.js
             }
         } else if (!hit) {
             this.markBoard(coord, 'o');
@@ -199,6 +206,50 @@ class Gameboard {
         let x = parseInt(coord.split('')[0]);
         let y = parseInt(coord.split('')[1]);
         this.grid[y][x] = mark;
+    }
+    getBuffer(shipObject) {
+        console.log(shipObject);
+        let bufferSet = [];
+        if (shipObject.dir === 'd' || shipObject === 'u') {
+            let i = 0;
+            while (i < shipObject.coords.length) {
+                let coordX = parseInt(shipObject.coords[i].split('')[0]);
+                let coordY = parseInt(shipObject.coords[i].split('')[1]);
+                let bufferCoord;
+                if (i === 0 && coordY !== 0) {
+                    bufferCoord = `${coordX}${coordY - 1}`;
+                    bufferSet.push(bufferCoord);
+                } else if (i === shipObject.coords.length - 1 && coordY !== 9) {
+                    bufferCoord = `${coordX}${coordY + 1}`;
+                    bufferSet.push(bufferCoord);
+                }
+                bufferCoord = `${coordX - 1}${coordY}`;
+                bufferSet.push(bufferCoord);
+                bufferCoord = `${coordX + 1}${coordY}`
+                bufferSet.push(bufferCoord);
+                i++;
+            }
+        } else if (shipObject.dir === 'l' || shipObject.dir === 'r') {
+            let i = 0;
+            while (i < shipObject.coords.length) {
+                let coordX = parseInt(shipObject.coords[i].split('')[0]);
+                let coordY = parseInt(shipObject.coords[i].split('')[1]);
+                let bufferCoord;
+                if (i === 0 && coordX !== 0) {
+                    bufferCoord = `${coordX - 1}${coordY}`;
+                    bufferSet.push(bufferCoord);
+                } else if (i === shipObject.coords.length - 1 && coordX !== 9) {
+                    bufferCoord = `${coordX + 1}${coordY}`;
+                    bufferSet.push(bufferCoord);
+                }
+                bufferCoord = `${coordX}${coordY - 1}`;
+                bufferSet.push(bufferCoord);
+                bufferCoord = `${coordX}${coordY + 1}`;
+                bufferSet.push(bufferCoord);
+                i++;
+            }
+        }
+        return bufferSet;
     }
 
     isLoser() {

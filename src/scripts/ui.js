@@ -316,6 +316,7 @@ const ui = (() => {
         }
     }
     function displayHit(player, coord, hit) {
+        console.log('enter displayHit');
         if (player === 'computer') {
             if (hit) {
                 state.targetCell.classList.add('hit');
@@ -326,12 +327,12 @@ const ui = (() => {
             let target = document.getElementById(coord);
             if (hit) {
                 target.classList.add('hit');
-            } else if (!hit) {
+            } else if (!hit && !target.classList.contains('miss')) {
                 target.classList.add('miss');
             }
         }
     }
-    function displaySunk(player, length, name) {
+    function displaySunk(player, name) {
         if (player === 'human') {
             player = 'h';
         } else if (player === 'computer') {
@@ -339,6 +340,15 @@ const ui = (() => {
         }
         let ship = document.getElementById(`${player}-${name}`);
         ship.classList.add('sunk');
+    }
+    function displayBuffer(player, bufferCoords) {
+        console.log('enter displayBuffer');
+        for (let i = 0; i < bufferCoords.length; i++) {
+            console.log(i);
+            state.targetCell = document.querySelector(`main section#${player} section.board div.row div#${bufferCoords[i]}`)
+            console.log(state.targetCell);
+            displayHit(player, bufferCoords[i], false);
+        }
     }
     function generateAlertBox() {
         let options = ['cancel', 'confirm'];
@@ -357,7 +367,6 @@ const ui = (() => {
         body.append(screen, alertContainer);
     }
     function removeAlertBox() {
-        console.log('enter removeAlertBox()');
         let screen = document.querySelector('.screen');
         let alertBox = document.getElementById('alert');
         if (alertBox !== null && screen !== null) {
@@ -396,6 +405,7 @@ const ui = (() => {
     events.subscribe('displayHit', displayHit); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('displaySunk', displaySunk); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('winner', endGame); // published by game.js (takeTurn)
+    events.subscribe('displayBuffer', displayBuffer); // published by classes.js (gameboard.receiveAttack)
 
     return {
         init, // used by index.js
