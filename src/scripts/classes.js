@@ -220,21 +220,31 @@ class Gameboard {
                     // console.log('get above');
                     bufferCoord = `${coordX}${coordY - 1}`;
                     bufferSet.push(bufferCoord);
-                    // console.log('get top corners);
-                    bufferCoord = `${coordX - 1}${coordY - 1}`
-                    bufferSet.push(bufferCoord);
-                    bufferCoord = `${coordX + 1}${coordY - 1}`
-                    bufferSet.push(bufferCoord);
+                    if (coordX !== 0) {
+                        // console.log('get left corner');
+                        bufferCoord = `${coordX - 1}${coordY - 1}`
+                        bufferSet.push(bufferCoord);
+                    }
+                    if (coordX !== 9) {
+                        // console.log('get right corner');
+                        bufferCoord = `${coordX + 1}${coordY - 1}`
+                        bufferSet.push(bufferCoord);
+                    }
                 }
                 if ((i === shipObject.coords.length - 1 || shipObject.length === 1) && coordY !== 9) {
                     // console.log('get above');
                     bufferCoord = `${coordX}${coordY + 1}`;
                     bufferSet.push(bufferCoord);
-                    // console.log('get bottom corners);
-                    bufferCoord = `${coordX - 1}${coordY + 1}`
-                    bufferSet.push(bufferCoord);
-                    bufferCoord = `${coordX + 1}${coordY + 1}`
-                    bufferSet.push(bufferCoord);
+                    if (coordX !== 0) {
+                        // console.log('get left corner');
+                        bufferCoord = `${coordX - 1}${coordY + 1}`
+                        bufferSet.push(bufferCoord);
+                    }
+                    if (coordX !== 9) {
+                        // console.log('get right corner');
+                        bufferCoord = `${coordX + 1}${coordY + 1}`
+                        bufferSet.push(bufferCoord);
+                    }
                 }
                 if (coordX !== 0) {
                     // console.log('get left');
@@ -258,21 +268,31 @@ class Gameboard {
                     // console.log('get left');
                     bufferCoord = `${coordX - 1}${coordY}`;
                     bufferSet.push(bufferCoord);
-                    // console.log('get left corners);
-                    bufferCoord = `${coordX - 1}${coordY - 1}`
-                    bufferSet.push(bufferCoord);
-                    bufferCoord = `${coordX - 1}${coordY + 1}`
-                    bufferSet.push(bufferCoord);
+                    if (coordY !== 0) {
+                        // console.log('get top corner);
+                        bufferCoord = `${coordX - 1}${coordY - 1}`
+                        bufferSet.push(bufferCoord);
+                    }
+                    if (coordY !== 9) {
+                        // console.log('get bottom corner');
+                        bufferCoord = `${coordX - 1}${coordY + 1}`
+                        bufferSet.push(bufferCoord);
+                    }
                 }
                 if ((i === shipObject.coords.length - 1 || shipObject.length === 1) && coordX !== 9) {
                     // console.log('get right');
                     bufferCoord = `${coordX + 1}${coordY}`;
                     bufferSet.push(bufferCoord);
-                    // console.log('get right corners);
-                    bufferCoord = `${coordX + 1}${coordY - 1}`
-                    bufferSet.push(bufferCoord);
-                    bufferCoord = `${coordX + 1}${coordY + 1}`
-                    bufferSet.push(bufferCoord);
+                    if (coordY !== 0) {
+                        // console.log('get top corner');
+                        bufferCoord = `${coordX + 1}${coordY - 1}`
+                        bufferSet.push(bufferCoord);
+                    }
+                    if (coordY !== 9) {
+                        // console.log('get bottom corner')
+                        bufferCoord = `${coordX + 1}${coordY + 1}`
+                        bufferSet.push(bufferCoord);
+                    }
                 }
                 if (coordY !== 0) {
                     // console.log('get above');
