@@ -217,42 +217,34 @@ class Gameboard {
                 let coordY = parseInt(shipObject.coords[i].split('')[1]);
                 let bufferCoord;
                 if (i === 0 && coordY !== 0) {
-                    // console.log('get above');
                     bufferCoord = `${coordX}${coordY - 1}`;
                     bufferSet.push(bufferCoord);
                     if (coordX !== 0) {
-                        // console.log('get left corner');
                         bufferCoord = `${coordX - 1}${coordY - 1}`
                         bufferSet.push(bufferCoord);
                     }
                     if (coordX !== 9) {
-                        // console.log('get right corner');
                         bufferCoord = `${coordX + 1}${coordY - 1}`
                         bufferSet.push(bufferCoord);
                     }
                 }
                 if ((i === shipObject.coords.length - 1 || shipObject.length === 1) && coordY !== 9) {
-                    // console.log('get above');
                     bufferCoord = `${coordX}${coordY + 1}`;
                     bufferSet.push(bufferCoord);
                     if (coordX !== 0) {
-                        // console.log('get left corner');
                         bufferCoord = `${coordX - 1}${coordY + 1}`
                         bufferSet.push(bufferCoord);
                     }
                     if (coordX !== 9) {
-                        // console.log('get right corner');
                         bufferCoord = `${coordX + 1}${coordY + 1}`
                         bufferSet.push(bufferCoord);
                     }
                 }
                 if (coordX !== 0) {
-                    // console.log('get left');
                     bufferCoord = `${coordX - 1}${coordY}`;
                     bufferSet.push(bufferCoord);
                 }
                 if (coordX !== 9) {
-                    // console.log('get right');
                     bufferCoord = `${coordX + 1}${coordY}`
                     bufferSet.push(bufferCoord);
                 }
@@ -265,42 +257,34 @@ class Gameboard {
                 let coordY = parseInt(shipObject.coords[i].split('')[1]);
                 let bufferCoord;
                 if (i === 0 && coordX !== 0) {
-                    // console.log('get left');
                     bufferCoord = `${coordX - 1}${coordY}`;
                     bufferSet.push(bufferCoord);
                     if (coordY !== 0) {
-                        // console.log('get top corner);
                         bufferCoord = `${coordX - 1}${coordY - 1}`
                         bufferSet.push(bufferCoord);
                     }
                     if (coordY !== 9) {
-                        // console.log('get bottom corner');
                         bufferCoord = `${coordX - 1}${coordY + 1}`
                         bufferSet.push(bufferCoord);
                     }
                 }
                 if ((i === shipObject.coords.length - 1 || shipObject.length === 1) && coordX !== 9) {
-                    // console.log('get right');
                     bufferCoord = `${coordX + 1}${coordY}`;
                     bufferSet.push(bufferCoord);
                     if (coordY !== 0) {
-                        // console.log('get top corner');
                         bufferCoord = `${coordX + 1}${coordY - 1}`
                         bufferSet.push(bufferCoord);
                     }
                     if (coordY !== 9) {
-                        // console.log('get bottom corner')
                         bufferCoord = `${coordX + 1}${coordY + 1}`
                         bufferSet.push(bufferCoord);
                     }
                 }
                 if (coordY !== 0) {
-                    // console.log('get above');
                     bufferCoord = `${coordX}${coordY - 1}`;
                     bufferSet.push(bufferCoord);
                 }
                 if (coordY !== 9) {
-                    // console.log('get below');
                     bufferCoord = `${coordX}${coordY + 1}`;
                     bufferSet.push(bufferCoord);
                 }
