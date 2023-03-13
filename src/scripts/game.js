@@ -34,7 +34,7 @@ const game = (() => {
     function replaceToOriginal() {
         let ship = human.board.replacing;
         human.board.replaceShipToOriginal();
-        events.publish('receiveShipData', ship.name, ship.length, ship.coords); // subscribed by ui.js
+        events.publish('receiveShipData', ship.name, ship.dir, ship.length, ship.coords); // subscribed by ui.js
     }
 
     // play methods

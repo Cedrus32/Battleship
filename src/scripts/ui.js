@@ -28,11 +28,11 @@ const ui = (() => {
                 setMenuSelect(e.target.parentElement);
             } else if (e.target.classList.contains('cell')) {
                 if (state.placing && state.coordData[1]) {
-                    events.publish('placeShip', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]); // subscribed by game.js
+                    events.publish('placeShip', state.targetCell.id.split('-')[1], state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]); // subscribed by game.js
                     placeShipUI();
                 } else if (!state.placing && e.target.classList.contains('placed')) {
                     state.placing = true;
-                    events.publish('queryShipData', state.targetCell.id); // subscribed by game.js
+                    events.publish('queryShipData', state.targetCell.id.split('-')[1]); // subscribed by game.js
                     events.publish('deleteShipObject', state.selectedShip.id.split('-')[1]); // subscribed by game.js
                 }
             }
@@ -47,7 +47,7 @@ const ui = (() => {
             } else if (e.target.parentElement.parentElement.parentElement !== null && e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
                 e.target.classList.remove('attack');
                 state.targetCell = e.target;
-                events.publish('takeTurn', e.target.id); // subscribed by game.js
+                events.publish('takeTurn', e.target.id.split('-')[1]); // subscribed by game.js
             }
         }
     });
@@ -68,7 +68,7 @@ const ui = (() => {
                     case 'ArrowRight':
                         state.direction = 'r';
                 }
-                events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
+                events.publish('queryCoordData', state.targetCell.id.split('-')[1], state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
             } else if (e.key === 'Escape') {
                 setMenuSelect(state.selectedShip);
                 removeCellHover();
@@ -78,7 +78,7 @@ const ui = (() => {
     playerBoards[0].addEventListener('mouseover', (e) => {
         state.targetCell = e.target;
         if (state.placing && !state.playing && e.target.classList.contains('cell')) {
-            events.publish('queryCoordData', state.targetCell.id, state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
+            events.publish('queryCoordData', state.targetCell.id.split('-')[1], state.direction, state.selectedShip.id.split('-')[0]); // subscribed by game.js
         }
     });
     playerBoards[0].addEventListener('mouseout', (e) => {
@@ -104,7 +104,7 @@ const ui = (() => {
         // generate boards
         let i = 0;
         while (i < playerBoards.length) {
-            generateGrid(playerBoards[i]);
+            generateGrid(playerBoards[i], i);
             i++;
         }
         // set state
@@ -191,13 +191,19 @@ const ui = (() => {
     }
 
     // init helper methods
-    function generateGrid(board) {
+    function generateGrid(board, boardNumber) {
+        let player;
+        if (boardNumber === 0) {
+            player = 'h';
+        } else if (boardNumber === 1) {
+            player = 'c';
+        }
         let i = 0;
         while (i < 10) {
             let row = create.div('', '.row')
             let j = 0;
             while (j < 10) {
-                let cell = create.div('', '.cell', `#${j}${i}`);
+                let cell = create.div('', '.cell', `#${player}-${j}${i}`);
                 row.append(cell);
                 j++;
             }
@@ -250,7 +256,7 @@ const ui = (() => {
     function addCellHover(isValid) {
         for (let i = 0; i < state.coordData[0].length; i++) {
             if (state.coordData[0][i].length <= 2) {
-                let cell = document.getElementById(state.coordData[0][i]);
+                let cell = document.getElementById(`h-${state.coordData[0][i]}`);
                 cell.classList.add('hover');
                 if (isValid) {
                     cell.classList.add('is-valid');
@@ -264,7 +270,7 @@ const ui = (() => {
         if (state.coordData !== undefined) {
             for (let i = 0; i < state.coordData[0].length; i++) {
                 if (state.coordData[0][i].length <= 2) {
-                    let cell = document.getElementById(state.coordData[0][i]);
+                    let cell = document.getElementById(`h-${state.coordData[0][i]}`);
                     if (cell.classList.contains('placed')) {
                         cell.classList = 'cell placed';
                     } else {
@@ -277,7 +283,7 @@ const ui = (() => {
     function placeShipUI() {
         state.selectedShip.classList = 'ship placed';
         for (let i = 0; i < state.coordData[0].length; i++) {
-            let cell = document.getElementById(state.coordData[0][i]);
+            let cell = document.getElementById(`h-${state.coordData[0][i]}`);
             cell.classList = 'cell';
             cell.classList.add('placed');
         }
@@ -287,7 +293,7 @@ const ui = (() => {
     }
     function replaceShipUI(name, dir, length, coords) {
         for (let i = 0; i < coords.length; i++) {
-            let cell = document.getElementById(coords[i]);
+            let cell = document.getElementById(`h-${coords[i]}`);
             cell.classList = 'cell hover is-valid';
         }
         state.selectedShip = document.getElementById(`${length}-${name}`);
@@ -316,15 +322,15 @@ const ui = (() => {
         }
     }
     function displayHit(player, coord, hit) {
-        console.log('enter displayHit');
         if (player === 'computer') {
+            state.targetCell = document.getElementById(`c-${coord}`);
             if (hit) {
                 state.targetCell.classList.add('hit');
             } else if (!hit) {
                 state.targetCell.classList.add('miss');
             }
         } else if (player === 'human') {
-            let target = document.getElementById(coord);
+            let target = document.getElementById(`h-${coord}`);
             if (hit) {
                 target.classList.add('hit');
             } else if (!hit && !target.classList.contains('miss')) {
@@ -342,11 +348,7 @@ const ui = (() => {
         ship.classList.add('sunk');
     }
     function displayBuffer(player, bufferCoords) {
-        console.log('enter displayBuffer');
         for (let i = 0; i < bufferCoords.length; i++) {
-            console.log(i);
-            state.targetCell = document.querySelector(`main section#${player} section.board div.row div#${bufferCoords[i]}`)
-            console.log(state.targetCell);
             displayHit(player, bufferCoords[i], false);
         }
     }
