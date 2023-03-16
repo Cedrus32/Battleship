@@ -361,10 +361,40 @@ class Computer extends Human {
             if (!this.attacksMade.includes(coord)) {
                 valid = true;
                 this.attacksMade.push(coord);
-                this.sendAttack('human', coord, board)
+                this.sendAttack('human', coord, board); // sendAttack will return data if player is 'human'
             }
         }
     }
+
+    // previousAttack = {'mode', 'startCoord', 'direction', [targets]}
+
+    // ENTER MAKEATTACK() ...
+        // if board.mode === 'hunt' ...
+            // randomize attack
+        // if board.mode === 'target' ...
+            // if direction unknown ...
+                // try each targetCoord one at a time
+            // if direction known ...
+                // if previous cells ...
+                    // try previous until miss
+                    // if miss, clear previous cells (edge reached)
+                // else if next cells ...
+                    // try next until miss
+                    // if miss, clear next cells (edge reached) ?? redundant if target data will be cleared at ship sink?
+    
+    // RECEIVE HIT RESULT ...
+        // if sunk ...
+            // mode === hunt
+            // clear 'startCoord', 'direction', [targets]
+        // if mode === hunt ...
+            // update mode to target
+        // if direction unknown ...
+            // update direction
+            // clear targets
+            // get previousCells, push to targets
+            // get nextCells, push to targets
+        
+
 }
 
 // FACTORIES
