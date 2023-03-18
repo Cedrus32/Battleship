@@ -30,6 +30,8 @@ const game = (() => {
     function resetBoardData() {
         human.board.resetBoard();
         computer.board.resetBoard();
+        computer.resetStrategy();
+        computer.resetAttacks();
     }
     function replaceToOriginal() {
         let ship = human.board.replacing;
@@ -45,11 +47,24 @@ const game = (() => {
         human.sendAttack('computer', targetCoord, computer.board);
         if (human.board.isLoser()) {
             events.publish('winner', 'computer'); // subscribed by ui.js
+            resetBoardData();
+            return;
         }
-        computer.randomizeAttack(human.board);
+        computer.makeAttack(human.board);
         if (computer.board.isLoser()) {
             events.publish('winner', 'human'); // subscribed by ui.js
+            resetBoardData();
         }
+    }
+    function updateComputerStrategy(sunk, hit, coord) {
+        console.log('updateComputerStrategy()');
+        computer.receiveAttackResult(sunk, hit, coord);
+    }
+    function addBufferToComputerAttacks(buffer) {
+        for (let i = 0; i < buffer.length; i++) {
+            computer.addToAttacks(buffer[i]);
+        }
+        console.log(computer.attacksMade);
     }
 
     // event subscriptions
@@ -61,6 +76,8 @@ const game = (() => {
     events.subscribe('replaceToOriginal', replaceToOriginal); // published by ui.js (body.onClick)
     events.subscribe('generateComputerShips', generateComputerShips); // published by ui.js (body.onClick)
     events.subscribe('takeTurn', takeTurn); // published by ui.js (body.onClick)
+    events.subscribe('receiveAttackResult', updateComputerStrategy); // published by classes.js (receiveAttack)
+    events.subscribe('addBufferToComputerAttacks', addBufferToComputerAttacks); // published by classes.js (receiveAttack)
 
     return {
         init, // used by index.js

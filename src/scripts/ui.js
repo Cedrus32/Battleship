@@ -378,16 +378,16 @@ const ui = (() => {
     }
 
     // end game
-    function endGame(player) {
+    function endGame(winner) {
         state.playing = false;
-        generateGameResult(player);
+        generateGameResult(winner);
     }
-    function generateGameResult(player) {
+    function generateGameResult(winner) {
         let alertContainer = create.div('', '#alert');
         let text;
-        if (player === 'human') {
+        if (winner === 'human') {
             text = 'You win! =D';
-        } else {
+        } else if (winner === 'computer') {
             text = "Computer wins. ='(";
         }
         let textSpan = create.span(text);

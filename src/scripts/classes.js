@@ -68,9 +68,7 @@ class Gameboard {
         this.shipsSunk = 0;
     }
     clearShips() {
-        while (this.ships.length > 0) {
-            this.ships.pop();
-        }
+        this.ships = [];
     }
     clearBoard() {
         for (let i = 0; i < this.grid.length; i++) {
@@ -149,7 +147,7 @@ class Gameboard {
         return coordSet;
     }
     setIsValid(coordSet) {
-        console.log(coordSet);
+        console.log('REMOVE setIsValid call');
         for (let i = 0; i < coordSet.length; i++) {
             if (coordSet[i].length > 2) {
                 console.log(`${coordSet[i]} outside bounds`);
@@ -184,12 +182,24 @@ class Gameboard {
                 this.shipsSunk += 1;
                 events.publish('displaySunk', player, ship.name); // subscribed by ui.js
                 let buffer = this.getBuffer(ship);
+                if (player === 'human') {
+                    events.publish('addBufferToComputerAttacks', buffer); // subscribed by game.js
+                }
                 events.publish('displayBuffer', player, buffer); // subscribed by ui.js
             }
         } else if (!hit) {
             this.markBoard(coord, 'o');
         }
         events.publish('displayHit', player, coord, hit); // subscribed by ui.js
+        if (player === 'human') {
+            let sunk;
+            if (ship !== undefined) {
+                sunk = ship.sunk;
+            } else {
+                sunk = undefined;
+            }
+            events.publish('receiveAttackResult', sunk, hit, coord); // subscribed by game.js
+        }
     }
     isHit(attackCoord) {
         for (let i = 0; i < this.ships.length; i++) {
@@ -315,6 +325,11 @@ class Computer extends Human {
         super(Human);
         this.type = 'computer';
         this.attacksMade = [];
+        this.mode = 'hunt';
+        this.target = {startCoord: undefined,
+                       direction: undefined,
+                       targets: [],
+                      }
     }
 
     randomizeShips() {
@@ -348,6 +363,15 @@ class Computer extends Human {
             }
         }
     }
+
+    makeAttack(board) {
+        console.log(this.mode);
+        if (this.mode === 'hunt') {
+            this.randomizeAttack(board);
+        } else if (this.mode === 'search' || this.mode === 'target') {
+            this.targetAttack(board);
+        }
+    }
     randomizeAttack(board) {
         let valid = false;
         while (valid === false) {
@@ -361,40 +385,115 @@ class Computer extends Human {
             if (!this.attacksMade.includes(coord)) {
                 valid = true;
                 this.attacksMade.push(coord);
-                this.sendAttack('human', coord, board); // sendAttack will return data if player is 'human'
+                this.sendAttack('human', coord, board);
             }
         }
+        console.log(this.attacksMade);
     }
-
-    // previousAttack = {'mode', 'startCoord', 'direction', [targets]}
-
-    // ENTER MAKEATTACK() ...
-        // if board.mode === 'hunt' ...
-            // randomize attack
-        // if board.mode === 'target' ...
-            // if direction unknown ...
-                // try each targetCoord one at a time
-            // if direction known ...
-                // if previous cells ...
-                    // try previous until miss
-                    // if miss, clear previous cells (edge reached)
-                // else if next cells ...
-                    // try next until miss
-                    // if miss, clear next cells (edge reached) ?? redundant if target data will be cleared at ship sink?
-    
-    // RECEIVE HIT RESULT ...
-        // if sunk ...
-            // mode === hunt
-            // clear 'startCoord', 'direction', [targets]
-        // if mode === hunt ...
-            // update mode to target
-        // if direction unknown ...
-            // update direction
-            // clear targets
-            // get previousCells, push to targets
-            // get nextCells, push to targets
-        
-
+    targetAttack(board) {
+        let valid = false;
+        while (valid === false) {
+            let targetCoord;
+            if (this.target.direction === undefined) {
+                targetCoord = this.target.targets.shift()
+            } else {
+                if (this.target.targets[0].length > 0) {
+                    targetCoord = this.target.targets[0].shift();
+                } else if (this.target.targets[1].length) {
+                    targetCoord = this.target.targets[1].shift();
+                }
+            }
+            console.log(this.attacksMade, targetCoord.length);
+            if (!this.attacksMade.includes(targetCoord) && targetCoord.length !== 3) {
+                valid = true;
+                this.attacksMade.push(targetCoord);
+                this.sendAttack('human', targetCoord, board);
+            }   
+        }
+        console.log(this.attacksMade);
+    }
+    receiveAttackResult(sunk, hit, coord) {
+        console.log('receiveAttackResults()');
+        console.log(sunk, hit, coord);
+        if (sunk) {
+            console.log(this.attacksMade);
+            this.resetStrategy();
+        } else {
+            if (hit && this.mode === 'hunt') { // first hit, no direction found
+                console.log('first hit, no direction found');
+                this.mode = 'search';
+                this.target.startCoord = coord;
+                let x = parseInt(coord.split('')[0]);
+                let y = parseInt(coord.split('')[1]);
+                let coordChanges = [[x, y - 1], 
+                                    [x + 1, y],
+                                    [x, y + 1],
+                                    [x - 1, y],
+                                   ]
+                for (let i = 0; i < coordChanges.length; i++) {
+                    if ((coordChanges[i][0] >= 0 && coordChanges[i][0] <= 9) && (coordChanges[i][1] >= 0 && coordChanges[i][1] <= 9)) {
+                        this.target.targets.push(`${coordChanges[i][0]}${coordChanges[i][1]}`);
+                    }
+                }
+            } else if (hit && this.mode === 'search') { // second hit, change mode to target
+                console.log('second hit, change mode to target');
+                this.mode = 'target';
+                this.updateDirection(this.target.startCoord, coord)
+                this.target.targets = [];
+                this.updateTargetCells(this.target.direction);
+            } else if (!hit && this.mode === 'target') { // edge reached, clear previous cells
+                console.log('edge reached, clear previous cells');
+                this.target.targets[0] = [];
+            }
+        }
+        console.log(this.mode);
+        console.log(this.target);
+    }
+    updateDirection(firstCoord, secondCoord) {
+        let xa = firstCoord.split('')[0];
+        let xb = secondCoord.split('')[0];
+        let ya = firstCoord.split('')[1];
+        let yb = secondCoord.split('')[1];
+        if (xa - xb !== 0) {
+            this.target.direction = 'h';
+        } else if (ya - yb !== 0) {
+            this.target.direction = 'v';
+        }
+    }
+    updateTargetCells(direction) {
+        let previous = [];
+        let next = [];
+        if (direction === 'h') {
+            for (let i = 0; i < parseInt(this.target.startCoord.split('')[0]); i++) {
+                previous.unshift(`${i}${parseInt(this.target.startCoord.split('')[1])}`);
+            }
+            for (let i = parseInt(this.target.startCoord.split('')[0]) + 1; i <= 9; i++) {
+                next.push(`${i}${parseInt(this.target.startCoord.split('')[1])}`);
+            }
+        } else if (direction === 'v') {
+            for (let i = 0; i < parseInt(this.target.startCoord.split('')[1]); i++) {
+                previous.unshift(`${parseInt(this.target.startCoord.split('')[0])}${i}`);
+            }
+            for (let i = parseInt(this.target.startCoord.split('')[0]) + 1; i <= 9; i++) {
+                next.push(`${parseInt(this.target.startCoord.split('')[0])}${i}`);
+            }
+        }
+        this.target.targets.push(previous, next);
+    }
+    addToAttacks(coord) {
+        console.log(coord);
+        this.attacksMade.push(coord);
+    }
+    resetStrategy() {
+        this.mode = 'hunt';
+        this.target = {startCoord: undefined,
+                       direction: undefined,
+                       targets: [],
+                      }
+    }
+    resetAttacks() {
+        this.attacksMade = [];
+    }
 }
 
 // FACTORIES
