@@ -148,13 +148,6 @@ class Gameboard {
         this.replacing = undefined;
         this.shipsSunk = 0;
     }
-    clearBoard() {
-        for (let row in this.grid) {
-            for (let cell in this.grid[row]) {
-                this.grid[row][cell] = [];
-            }
-        }
-    }
 
     // bools
     setIsValid(coordSet) {
@@ -235,11 +228,6 @@ class Gameboard {
             }
             events.publish('receiveAttackResult', sunk, hit, coord); // subscribed by game.js
         }
-    }
-    markBoard(coord, mark) {
-        let x = parseInt(coord[0]);
-        let y = parseInt(coord[1]);
-        this.grid[y][x] = mark;
     }
 }
 class Human {
