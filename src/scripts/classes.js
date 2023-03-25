@@ -27,18 +27,8 @@ class Ship {
         this.placed = true;
     }
 }
-class Gameboard { // * (look at grid)
-    constructor() { // ! where is grid being used?
-        this.grid = [[[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []],
-                     [[], [], [], [], [], [], [], [], [], []]];
+class Gameboard {
+    constructor() {
         this.ships = [];
         this.replacing = undefined;
         this.shipsSunk = 0;
@@ -226,7 +216,6 @@ class Gameboard { // * (look at grid)
         let hit = outcome[0];
         let ship = outcome[1];
         if (hit) {
-            this.markBoard(coord, 'x');
             ship.logHit();
             if (ship.sunk) {
                 this.shipsSunk += 1;
@@ -237,8 +226,6 @@ class Gameboard { // * (look at grid)
                 }
                 events.publish('displayBuffer', player, buffer); // subscribed by ui.js
             }
-        } else if (!hit) {
-            this.markBoard(coord, 'o');
         }
         events.publish('displayAttack', player, coord, hit); // subscribed by ui.js
         if (player === 'human') {
