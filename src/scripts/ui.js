@@ -403,8 +403,8 @@ const ui = (() => {
     // event subscriptions
     events.subscribe('receiveCoordData', setBoardHover); // published by game.js (queryCoordData)
     events.subscribe('receiveShipData', replaceShipUI); // published by game.js (queryShipData, replaceToOriginal)
-    events.subscribe('makePlayLive', makePlayLive); // published by classes.js (gameboard.placeShip)
-    events.subscribe('displayHit', displayHit); // published by classes.js (gameboard.receiveAttack)
+    events.subscribe('makePlayLive', makePlayLive); // published by classes.js (computer.randomizeShips)
+    events.subscribe('displayAttack', displayHit); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('displaySunk', displaySunk); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('winner', endGame); // published by game.js (takeTurn)
     events.subscribe('displayBuffer', displayBuffer); // published by classes.js (gameboard.receiveAttack)

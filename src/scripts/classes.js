@@ -11,21 +11,24 @@ class Ship {
         this.coords = coords;
     }
 
-    isPlaced() {
-        this.placed = true;
-    }
+    // setters
     logHit() {
         this.hits += 1;
+        console.log('ship hits:', this.hits);
         this.isSunk();
     }
     isSunk() {
         if (this.hits === this.length) {
             this.sunk = true;
         }
+        console.log('ship sunk:', this.sunk)
+    }
+    isPlaced() {
+        this.placed = true;
     }
 }
-class Gameboard {
-    constructor() {
+class Gameboard { // * (look at grid)
+    constructor() { // ! where is grid being used?
         this.grid = [[[], [], [], [], [], [], [], [], [], []],
                      [[], [], [], [], [], [], [], [], [], []],
                      [[], [], [], [], [], [], [], [], [], []],
@@ -41,51 +44,173 @@ class Gameboard {
         this.shipsSunk = 0;
     }
 
+    // getters
     getShip(targetCoord) {
-        for (let i = 0; i < this.ships.length; i++) {
-            for (let j = 0; j < this.ships[i].coords.length; j++) {
-                if (this.ships[i].coords[j] === targetCoord) {
-                    return this.ships[i];
+        for (let ship in this.ships) {
+            for (let coord in this.ships[ship].coords) {
+                if (this.ships[ship].coords[coord] === targetCoord) {
+                    return this.ships[ship];
                 }
             }
         }
     }
-    removeShip(shipName) {
-        for (let i = 0; i < this.ships.length; i++) {
-            if (this.ships[i].name === shipName) {
-                if (this.ships.length === 7) {
-                    this.replacing = this.ships[i];
-                }
-                this.ships.splice(i, 1);
+    getCoords(startCoord, dir, shipLen) {
+        shipLen = parseInt(shipLen);
+        console.log(startCoord, dir, shipLen);
+        let coordSet = [startCoord];
+        let xPosition = parseInt(startCoord[0]);
+        let yPosition = parseInt(startCoord[1]);
+        let i = 0;
+        while (i < shipLen - 1) {
+            switch(dir) {
+                case 'u':
+                    yPosition -= 1;
+                    break;
+                case 'd':
+                    yPosition += 1;
+                    break;
+                case 'l':
+                    xPosition -= 1;
+                    break;
+                case 'r':
+                    xPosition += 1;
             }
+            let newCoord = `${xPosition}${yPosition}`;
+            switch(true) {
+                case (dir === 'u' || dir === 'l'):
+                    coordSet.unshift(newCoord);
+                    break;
+                case (dir === 'd' || dir === 'r'):
+                    coordSet.push(newCoord);
+            }
+            i++;
+        }
+        return coordSet;
+    }
+    getBuffer(shipObject) {
+        let bufferSet = [];
+        bufferSet.push(...getEnds(shipObject.coords[0], shipObject.coords[shipObject.length - 1], shipObject.dir));
+        bufferSet.push(...getSides(shipObject.coords, shipObject.dir, shipObject.length));
+
+        bufferSet = bufferSet.filter(coord => coord.length < 3);
+        return bufferSet;
+
+        function getEnds(startCoord, endCoord, direction) {
+            let bufferCoords = [];
+            let x = parseInt(startCoord[0]);
+            let y = parseInt(startCoord[1]);
+            if (direction === 'd' || direction === 'u') {
+                bufferCoords.push(`${x}${y - 1}`);
+                bufferCoords.push(`${x - 1}${y - 1}`);
+                bufferCoords.push(`${x + 1}${y - 1}`);
+            } else if (direction === 'l' || direction === 'r') {
+                bufferCoords.push(`${x - 1}${y}`);
+                bufferCoords.push(`${x - 1}${y - 1}`);
+                bufferCoords.push(`${x - 1}${y + 1}`);
+            }
+            x = parseInt(endCoord[0]);
+            y = parseInt(endCoord[1]);
+            if (direction === 'd' || direction === 'u') {
+                bufferCoords.push(`${x}${y + 1}`);
+                bufferCoords.push(`${x - 1}${y + 1}`);
+                bufferCoords.push(`${x + 1}${y + 1}`);
+            } else if (direction === 'l' || direction === 'r') {
+                bufferCoords.push(`${x + 1}${y}`);
+                bufferCoords.push(`${x + 1}${y - 1}`);
+                bufferCoords.push(`${x + 1}${y + 1}`);
+            }
+            return bufferCoords;
+        }
+        function getSides(coords, direction, length) {
+            let bufferCoords = [];
+            let i = 0;
+            while (i < length) {
+                let x = parseInt(coords[i][0])
+                let y = parseInt(coords[i][1]);
+                if (direction === 'd' || direction === 'u') {
+                    bufferCoords.push(`${x - 1}${y}`);
+                    bufferCoords.push(`${x + 1}${y}`);
+                }
+                if (direction === 'l' || direction === 'r') {
+                    bufferCoords.push(`${x}${y - 1}`);
+                    bufferCoords.push(`${x}${y + 1}`);
+                }
+                i++;
+            }
+            return bufferCoords;
         }
     }
 
+    // resetters
+    removeShip(shipName) {
+        for (let ship in this.ships) {
+            if (this.ships[ship].name === shipName) {
+                if (this.ships.length === 7) {
+                    this.replacing = this.ships[ship];
+                }
+                this.ships.splice(ship, 1);
+            }
+        }
+    }
     resetBoard() {
-        this.clearShips();
         this.clearBoard();
+        this.ships = [];
         this.replacing = undefined;
         this.shipsSunk = 0;
     }
-    clearShips() {
-        this.ships = [];
-    }
     clearBoard() {
-        for (let i = 0; i < this.grid.length; i++) {
-            for (let j = 0; j < this.grid[i].length; j++) {
-                this.grid[i][j] = [];
+        for (let row in this.grid) {
+            for (let cell in this.grid[row]) {
+                this.grid[row][cell] = [];
             }
         }
     }
 
+    // bools
+    setIsValid(coordSet) {
+        for (let coord in coordSet) {
+            if (coordSet[coord].length > 2) {
+                console.log(`${coordSet[coord]} outside bounds`);
+                return false;
+            }
+            let x = parseInt(coordSet[coord][0]);
+            let y = parseInt(coordSet[coord][1]);
+            for (let item in this.ships) {
+                let ship = this.ships[item];
+                let xMin = parseInt(ship.coords[0][0]) - 1;
+                let xMax = parseInt(ship.coords[ship.coords.length - 1][0]) + 1;
+                let yMin = parseInt(ship.coords[0][1]) - 1;
+                let yMax = parseInt(ship.coords[ship.coords.length - 1][1]) + 1;
+                if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
+                    console.log(`${coordSet[coord]} too close to placed ship`);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    isHit(attackCoord) {
+        for (let ship in this.ships) {
+            for (let coord in this.ships[ship].coords) {
+                if (attackCoord === this.ships[ship].coords[coord]) {
+                    return [true, this.ships[ship]];
+                }
+            }
+        }
+        return [false, undefined];
+    }
+    isLoser() {
+        if (this.shipsSunk === this.ships.length) {
+            return true;
+        }
+    }
+
+    // placement
     placeShip(startCoord, dir, shipLen, shipName) {
         shipLen = parseInt(shipLen);
         let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
-        if (this.setIsValid(coordSet)) {    // used by computer AI to varifyplacement validity
+        if (this.setIsValid(coordSet)) {    // used by computer AI to varify placement validity
             this.ships.push(makeShip(shipLen, dir, shipName, coordSet));
-            if (this.ships.length === 7) {
-                events.publish('makePlayLive', ''); // subscribed by ui.js, game.js
-            }
             return true;    // used by computer AI to control placement loop
         }
         return false;   // ""
@@ -94,83 +219,8 @@ class Gameboard {
         this.ships.push(this.replacing);
         this.replacing = undefined;
     }
-    getCoords(startCoord, dir, shipLen) {
-        shipLen = parseInt(shipLen);
-        console.log(startCoord, dir, shipLen);
-        let coordSet = [startCoord];
-        let i = 0;
-        switch (dir) {
-            case 'u': {
-                let yPosition = parseInt(startCoord.split('')[1]);
-                while (i < shipLen - 1) {
-                    yPosition -= 1;
-                    yPosition.toString();
-                    let newCoord = startCoord.split('')[0] + yPosition;
-                    coordSet.splice(0, 0, newCoord);
-                    i++;
-                }
-                break;
-            }
-            case 'd': {
-                let yPosition = parseInt(startCoord.split('')[1]);
-                while (i < shipLen - 1) {
-                    yPosition += 1;
-                    yPosition.toString();
-                    let newCoord = startCoord.split('')[0] + yPosition;
-                    coordSet.push(newCoord);
-                    i++;
-                }
-                break;
-            }
-            case 'l': {
-                let xPosition = parseInt(startCoord.split('')[0]);
-                while (i < shipLen - 1) {
-                    xPosition -= 1;
-                    xPosition.toString();
-                    let newCoord = xPosition + startCoord.split('')[1];
-                    coordSet.splice(0, 0, newCoord);
-                    i++;
-                }
-                break;
-            }
-            case 'r': {
-                let xPosition = parseInt(startCoord.split('')[0]);
-                while (i < shipLen - 1) {
-                    xPosition += 1;
-                    xPosition.toString();
-                    let newCoord = xPosition + startCoord.split('')[1];
-                    coordSet.push(newCoord);
-                    i++;
-                }
-            }
-        }
-        return coordSet;
-    }
-    setIsValid(coordSet) {
-        console.log('REMOVE setIsValid call');
-        for (let i = 0; i < coordSet.length; i++) {
-            if (coordSet[i].length > 2) {
-                console.log(`${coordSet[i]} outside bounds`);
-                return false;
-            }
-            let newX = parseInt(coordSet[i].split('')[0]);
-            let newY = parseInt(coordSet[i].split('')[1]);
-            for (let j = 0; j < this.ships.length; j++) {
-                let ship = this.ships[j];
-                let xMin = parseInt(ship.coords[0].split('')[0]) - 1;
-                let xMax = parseInt(ship.coords[ship.coords.length - 1].split('')[0]) + 1
-                let yMin = parseInt(ship.coords[0].split('')[1]) - 1;
-                let yMax = parseInt(ship.coords[ship.coords.length - 1].split('')[1]) + 1
-                if (newX >= xMin && newX <= xMax && newY >= yMin && newY <= yMax) {
-                    console.log(`${coordSet[i]} too close to placed ship`);
-                    return false
-                }
-            }
-        }
-        console.log('valid set');
-        return true;
-    }
 
+    // attacks
     receiveAttack(player, coord) {
         let outcome = this.isHit(coord);
         let hit = outcome[0];
@@ -190,124 +240,19 @@ class Gameboard {
         } else if (!hit) {
             this.markBoard(coord, 'o');
         }
-        events.publish('displayHit', player, coord, hit); // subscribed by ui.js
+        events.publish('displayAttack', player, coord, hit); // subscribed by ui.js
         if (player === 'human') {
             let sunk;
             if (ship !== undefined) {
                 sunk = ship.sunk;
-            } else {
-                sunk = undefined;
             }
             events.publish('receiveAttackResult', sunk, hit, coord); // subscribed by game.js
         }
     }
-    isHit(attackCoord) {
-        for (let i = 0; i < this.ships.length; i++) {
-            let ship = this.ships[i];
-            for (let j = 0; j < ship.coords.length; j++) {
-                let shipCoord = ship.coords[j];
-                if (attackCoord === shipCoord) {
-                    return [true, ship];
-                }
-            }
-        }
-        return [false, undefined];
-    }
     markBoard(coord, mark) {
-        let x = parseInt(coord.split('')[0]);
-        let y = parseInt(coord.split('')[1]);
+        let x = parseInt(coord[0]);
+        let y = parseInt(coord[1]);
         this.grid[y][x] = mark;
-    }
-    getBuffer(shipObject) {
-        let bufferSet = [];
-        if (shipObject.dir === 'd' || shipObject.dir === 'u') {
-            let i = 0;
-            while (i < shipObject.coords.length) {
-                let coordX = parseInt(shipObject.coords[i].split('')[0]);
-                let coordY = parseInt(shipObject.coords[i].split('')[1]);
-                let bufferCoord;
-                if (i === 0 && coordY !== 0) {
-                    bufferCoord = `${coordX}${coordY - 1}`;
-                    bufferSet.push(bufferCoord);
-                    if (coordX !== 0) {
-                        bufferCoord = `${coordX - 1}${coordY - 1}`
-                        bufferSet.push(bufferCoord);
-                    }
-                    if (coordX !== 9) {
-                        bufferCoord = `${coordX + 1}${coordY - 1}`
-                        bufferSet.push(bufferCoord);
-                    }
-                }
-                if ((i === shipObject.coords.length - 1 || shipObject.length === 1) && coordY !== 9) {
-                    bufferCoord = `${coordX}${coordY + 1}`;
-                    bufferSet.push(bufferCoord);
-                    if (coordX !== 0) {
-                        bufferCoord = `${coordX - 1}${coordY + 1}`
-                        bufferSet.push(bufferCoord);
-                    }
-                    if (coordX !== 9) {
-                        bufferCoord = `${coordX + 1}${coordY + 1}`
-                        bufferSet.push(bufferCoord);
-                    }
-                }
-                if (coordX !== 0) {
-                    bufferCoord = `${coordX - 1}${coordY}`;
-                    bufferSet.push(bufferCoord);
-                }
-                if (coordX !== 9) {
-                    bufferCoord = `${coordX + 1}${coordY}`
-                    bufferSet.push(bufferCoord);
-                }
-                i++;
-            }
-        } else if (shipObject.dir === 'l' || shipObject.dir === 'r') {
-            let i = 0;
-            while (i < shipObject.coords.length) {
-                let coordX = parseInt(shipObject.coords[i].split('')[0]);
-                let coordY = parseInt(shipObject.coords[i].split('')[1]);
-                let bufferCoord;
-                if (i === 0 && coordX !== 0) {
-                    bufferCoord = `${coordX - 1}${coordY}`;
-                    bufferSet.push(bufferCoord);
-                    if (coordY !== 0) {
-                        bufferCoord = `${coordX - 1}${coordY - 1}`
-                        bufferSet.push(bufferCoord);
-                    }
-                    if (coordY !== 9) {
-                        bufferCoord = `${coordX - 1}${coordY + 1}`
-                        bufferSet.push(bufferCoord);
-                    }
-                }
-                if ((i === shipObject.coords.length - 1 || shipObject.length === 1) && coordX !== 9) {
-                    bufferCoord = `${coordX + 1}${coordY}`;
-                    bufferSet.push(bufferCoord);
-                    if (coordY !== 0) {
-                        bufferCoord = `${coordX + 1}${coordY - 1}`
-                        bufferSet.push(bufferCoord);
-                    }
-                    if (coordY !== 9) {
-                        bufferCoord = `${coordX + 1}${coordY + 1}`
-                        bufferSet.push(bufferCoord);
-                    }
-                }
-                if (coordY !== 0) {
-                    bufferCoord = `${coordX}${coordY - 1}`;
-                    bufferSet.push(bufferCoord);
-                }
-                if (coordY !== 9) {
-                    bufferCoord = `${coordX}${coordY + 1}`;
-                    bufferSet.push(bufferCoord);
-                }
-                i++;
-            }
-        }
-        return bufferSet;
-    }
-
-    isLoser() {
-        if (this.shipsSunk === this.ships.length) {
-            return true;
-        }
     }
 }
 class Human {
@@ -316,6 +261,7 @@ class Human {
         this.board = makeGameboard();
     }
 
+    // attack
     sendAttack(player, coord, board) {
         board.receiveAttack(player, coord);
     }
@@ -325,61 +271,66 @@ class Computer extends Human {
         super(Human);
         this.type = 'computer';
         this.attacksMade = [];
-        this.mode = 'hunt';
-        this.target = {startCoord: undefined,
-                       direction: undefined,
-                       targets: [],
-                      }
+        this.strategy = {mode: 'search',
+                         startCoord: undefined,
+                         direction: undefined,
+                         targets: [],
+                        };
     }
 
+    // placement
     randomizeShips() {
-        let availShips = [[1, 'sub1'],
-                          [1, 'sub2'],
-                          [2, 'dest1'],
-                          [2, 'dest2'],
-                          [3, 'crus'],
+        let availShips = [[5, 'acc'],
                           [4, 'bs'],
-                          [5, 'acc'],
-                        ];
+                          [3, 'crus'],
+                          [2, 'dest2'],
+                          [2, 'dest1'],
+                          [1, 'sub2'],
+                          [1, 'sub1'],
+                         ];
         let dirs = ['u', 'd', 'l', 'r'];
         
         while (availShips.length > 0) {
             let shipLen = availShips[0][0];
             let shipName = availShips[0][1];
-            availShips.splice(0, 1);
+            availShips.shift();
 
             let dir = dirs[Math.floor(Math.random() * dirs.length)];
 
             let valid = false;
-            while (valid === false) {
+            while (!valid) {
                 let coord = '';
                 let i = 0;
                 while (i < 2) {
-                    let index = Math.floor(Math.random() * 10).toString();
-                    coord += index;
+                    let index = Math.floor(Math.random() * 10);
+                    coord += `${index}`;
                     i++;
                 }
+
                 valid = this.board.placeShip(coord, dir, shipLen, shipName);
             }
         }
+
+        events.publish('makePlayLive', ''); // subscribed by ui.js
     }
 
+    // attack drivers
     makeAttack(board) {
-        console.log(this.mode);
-        if (this.mode === 'hunt') {
+        console.log(this.strategy.mode);
+        if (this.strategy.mode === 'search') {
             this.randomizeAttack(board);
-        } else if (this.mode === 'search' || this.mode === 'target') {
+        } else if (this.strategy.mode === 'hunt' || this.strategy.mode === 'target') {
             this.targetAttack(board);
         }
     }
     randomizeAttack(board) {
         let valid = false;
-        while (valid === false) {
+        while (!valid) {
             let coord = '';
             let i = 0;
             while (i < 2) {
-                let index = Math.floor(Math.random() * 10).toString();
-                coord += index;
+                let index = Math.floor(Math.random() * 10);
+                coord += `${index}`;
                 i++;
             }
             if (!this.attacksMade.includes(coord)) {
@@ -388,108 +339,114 @@ class Computer extends Human {
                 this.sendAttack('human', coord, board);
             }
         }
-        console.log(this.attacksMade);
     }
     targetAttack(board) {
         let valid = false;
-        while (valid === false) {
+        while (!valid) {
             let targetCoord;
-            if (this.target.direction === undefined) {
-                targetCoord = this.target.targets.shift()
+            if (this.strategy.direction === undefined) {
+                targetCoord = this.strategy.targets.shift();
+            } else if (this.strategy.targets[0].length > 0) {
+                targetCoord = this.strategy.targets[0].shift();
             } else {
-                if (this.target.targets[0].length > 0) {
-                    targetCoord = this.target.targets[0].shift();
-                } else if (this.target.targets[1].length) {
-                    targetCoord = this.target.targets[1].shift();
-                }
+                targetCoord = this.strategy.targets[1].shift();
             }
             console.log(this.attacksMade, targetCoord.length);
-            if (!this.attacksMade.includes(targetCoord) && targetCoord.length !== 3) {
+            if (!this.attacksMade.includes(targetCoord) && targetCoord.length < 3) {
                 valid = true;
                 this.attacksMade.push(targetCoord);
                 this.sendAttack('human', targetCoord, board);
-            }   
+            }  
         }
         console.log(this.attacksMade);
     }
+    
+    // attack helpers
     receiveAttackResult(sunk, hit, coord) {
-        console.log('receiveAttackResults()');
-        console.log(sunk, hit, coord);
+        // console.log('receiveAttackResults()');
+        // console.log(sunk, hit, coord);
         if (sunk) {
-            console.log(this.attacksMade);
+            // console.log(this.attacksMade);
             this.resetStrategy();
         } else {
-            if (hit && this.mode === 'hunt') { // first hit, no direction found
-                console.log('first hit, no direction found');
-                this.mode = 'search';
-                this.target.startCoord = coord;
-                let x = parseInt(coord.split('')[0]);
-                let y = parseInt(coord.split('')[1]);
-                let coordChanges = [[x, y - 1], 
-                                    [x + 1, y],
-                                    [x, y + 1],
-                                    [x - 1, y],
-                                   ]
-                for (let i = 0; i < coordChanges.length; i++) {
-                    if ((coordChanges[i][0] >= 0 && coordChanges[i][0] <= 9) && (coordChanges[i][1] >= 0 && coordChanges[i][1] <= 9)) {
-                        this.target.targets.push(`${coordChanges[i][0]}${coordChanges[i][1]}`);
-                    }
-                }
-            } else if (hit && this.mode === 'search') { // second hit, change mode to target
-                console.log('second hit, change mode to target');
-                this.mode = 'target';
-                this.updateDirection(this.target.startCoord, coord)
-                this.target.targets = [];
-                this.updateTargetCells(this.target.direction);
-            } else if (!hit && this.mode === 'target') { // edge reached, clear previous cells
-                console.log('edge reached, clear previous cells');
-                this.target.targets[0] = [];
+            if (hit && this.strategy.mode === 'search') { // first hit, no direction found
+                this.huntStrategy(coord);
+            } else if (hit && this.strategy.mode === 'hunt') { // second hit, change mode to target
+                this.targetStrategy(coord);
+            } else if (!hit && this.strategy.mode === 'target') { // edge reached, clear previous cells
+                // console.log('edge reached, clear previous cells');
+                this.strategy.targets[0] = [];
             }
         }
-        console.log(this.mode);
-        console.log(this.target);
+        // console.log(this.strategy);
+    }
+    huntStrategy(coord) { 
+        // console.log('first hit, no direction found');
+        this.strategy.mode = 'hunt';
+        this.strategy.startCoord = coord;
+        let x = parseInt(coord.split('')[0]);
+        let y = parseInt(coord.split('')[1]);
+        let coordChanges = [[x, y - 1], 
+                            [x + 1, y],
+                            [x, y + 1],
+                            [x - 1, y],
+                            ];
+        for (let coord in coordChanges) {
+            if ((coordChanges[coord][0] >= 0 && coordChanges[coord][0] <= 9) && (coordChanges[coord][1] >= 0 && coordChanges[coord][1] <= 9)) {
+                this.strategy.targets.push(`${coordChanges[coord][0]}${coordChanges[coord][1]}`);
+            }
+        }
+    }
+    targetStrategy(coord) {
+        // console.log('second hit, change mode to target');
+        this.strategy.mode = 'target';
+        this.strategy.targets = [];
+        this.updateDirection(this.strategy.startCoord, coord);
+        this.updateTargetCells(this.strategy.direction);
     }
     updateDirection(firstCoord, secondCoord) {
-        let xa = firstCoord.split('')[0];
-        let xb = secondCoord.split('')[0];
-        let ya = firstCoord.split('')[1];
-        let yb = secondCoord.split('')[1];
-        if (xa - xb !== 0) {
-            this.target.direction = 'h';
-        } else if (ya - yb !== 0) {
-            this.target.direction = 'v';
+        let xa = parseInt(firstCoord[0]);
+        let xb = parseInt(secondCoord[0]);
+        let ya = parseInt(firstCoord[1]);
+        let yb = parseInt(secondCoord[1]);
+        if (xa - xb === 0) {
+            this.strategy.direction = 'v';
+        } else if (ya - yb === 0) {
+            this.strategy.direction = 'h';
         }
     }
     updateTargetCells(direction) {
         let previous = [];
         let next = [];
         if (direction === 'h') {
-            for (let i = 0; i < parseInt(this.target.startCoord.split('')[0]); i++) {
-                previous.unshift(`${i}${parseInt(this.target.startCoord.split('')[1])}`);
+            for (let i = 0; i < parseInt(this.strategy.startCoord[0]); i++) {
+                previous.unshift(`${i}${this.strategy.startCoord[1]}`);
             }
-            for (let i = parseInt(this.target.startCoord.split('')[0]) + 1; i <= 9; i++) {
-                next.push(`${i}${parseInt(this.target.startCoord.split('')[1])}`);
+            for (let i = parseInt(this.strategy.startCoord[0]) + 1; i <= 9; i++) {
+                next.push(`${i}${this.strategy.startCoord[1]}`);
             }
         } else if (direction === 'v') {
-            for (let i = 0; i < parseInt(this.target.startCoord.split('')[1]); i++) {
-                previous.unshift(`${parseInt(this.target.startCoord.split('')[0])}${i}`);
+            for (let i = 0; i < parseInt(this.strategy.startCoord[1]); i++) {
+                previous.unshift(`${this.strategy.startCoord[0]}${i}`);
             }
-            for (let i = parseInt(this.target.startCoord.split('')[0]) + 1; i <= 9; i++) {
-                next.push(`${parseInt(this.target.startCoord.split('')[0])}${i}`);
+            for (let i = parseInt(this.strategy.startCoord[1]) + 1; i <= 9; i++) {
+                next.push(`${this.strategy.startCoord[0]}${i}`);
             }
         }
-        this.target.targets.push(previous, next);
+        this.strategy.targets.push(previous, next);
     }
     addToAttacks(coord) {
         console.log(coord);
         this.attacksMade.push(coord);
     }
+
+    // resetters
     resetStrategy() {
-        this.mode = 'hunt';
-        this.target = {startCoord: undefined,
-                       direction: undefined,
-                       targets: [],
-                      }
+        this.strategy = {mode: 'search',
+                         startCoord: undefined,
+                         direction: undefined,
+                         targets: [],
+                        };
     }
     resetAttacks() {
         this.attacksMade = [];
@@ -511,5 +468,4 @@ function makePlayer(type) {
     }
 }
 
-// export { makeShip as default, makeGameboard, makePlayer };   // testing export
 export default makePlayer;

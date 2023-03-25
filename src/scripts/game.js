@@ -45,13 +45,13 @@ const game = (() => {
     }
     function takeTurn(targetCoord) {
         human.sendAttack('computer', targetCoord, computer.board);
-        if (human.board.isLoser()) {
+        if (computer.board.isLoser()) {
             events.publish('winner', 'computer'); // subscribed by ui.js
             resetBoardData();
             return;
         }
         computer.makeAttack(human.board);
-        if (computer.board.isLoser()) {
+        if (human.board.isLoser()) {
             events.publish('winner', 'human'); // subscribed by ui.js
             resetBoardData();
         }
