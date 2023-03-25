@@ -143,7 +143,6 @@ class Gameboard {
         }
     }
     resetBoard() {
-        this.clearBoard();
         this.ships = [];
         this.replacing = undefined;
         this.shipsSunk = 0;
