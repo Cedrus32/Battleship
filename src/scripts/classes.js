@@ -193,6 +193,9 @@ class Gameboard {
         let coordSet = this.getCoords(startCoord, dir, shipLen); // used by computer AI to generate ship placement
         if (this.setIsValid(coordSet)) {    // used by computer AI to varify placement validity
             this.ships.push(makeShip(shipLen, dir, shipName, coordSet));
+            if (this.ships.length === 7) {
+                events.publish('makePlayLive', ''); // subscribed by ui.js
+            }
             return true;    // used by computer AI to control placement loop
         }
         return false;   // ""
@@ -284,8 +287,6 @@ class Computer extends Human {
                 valid = this.board.placeShip(coord, dir, shipLen, shipName);
             }
         }
-
-        events.publish('makePlayLive', ''); // subscribed by ui.js
     }
 
     // attack drivers

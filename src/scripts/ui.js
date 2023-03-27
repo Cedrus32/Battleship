@@ -16,6 +16,7 @@ const ui = (() => {
                     isValid: false,
                    },
         direction: 'r',
+        computerBoardEnabled: false,
     }
 
     // event listeners
@@ -46,7 +47,7 @@ const ui = (() => {
                 removeAlertBox();
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
                 removeAlertBox();
-            } else if (e.target.parentElement.parentElement.parentElement !== null && e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
+            } else if (state.computerBoardEnabled === true && e.target.parentElement.parentElement.parentElement !== null && e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
                 e.target.classList.remove('attack');
                 state.targetCell = e.target;
                 events.publish('takeTurn', e.target.id.split('-')[1]); // subscribed by game.js
@@ -131,6 +132,7 @@ const ui = (() => {
         // ask computer board to generate placements
         events.publish('generateComputerShips', ''); // subscribed by game.js
         // set state to play
+        state.computerBoardEnabled = true;
         state.placing = false;
         state.playing = true;
     }
@@ -167,6 +169,7 @@ const ui = (() => {
                            isValid: false,
                           };
         state.direction = 'r';
+        state.computerBoardEnabled = false;
     }
 
     // multi-use helper methods
@@ -308,6 +311,14 @@ const ui = (() => {
         playButton.disabled = false;
         playButton.ariaDisabled = false;
     }
+    function toggleComputerBoard() {
+        console.log(state.computerBoardEnabled);
+        if (state.computerBoardEnabled === true) {
+            state.computerBoardEnabled = false;
+        } else if (state.computerBoardEnabled === false) {
+            state.computerBoardEnabled = true;
+        }
+    }
     function generateShipTallies(tallyContainer, index) {
         let playerType;
         if (index === 0) {
@@ -399,11 +410,12 @@ const ui = (() => {
     // event subscriptions
     events.subscribe('receiveCoordData', setBoardHover); // published by game.js (queryCoordData)
     events.subscribe('receiveShipData', removeShipPlaced); // published by game.js (queryShipData, replaceToOriginal)
-    events.subscribe('makePlayLive', makePlayLive); // published by classes.js (computer.randomizeShips)
+    events.subscribe('makePlayLive', makePlayLive); // published by classes.js (gameboard.placeShip)
     events.subscribe('displayAttack', displayHit); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('displaySunk', displaySunk); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('winner', endGame); // published by game.js (takeTurn)
     events.subscribe('displayBuffer', displayBuffer); // published by classes.js (gameboard.receiveAttack)
+    events.subscribe('toggleComputerBoard', toggleComputerBoard); // published by game.js (computerTurn)
 
     return {
         init, // used by index.js

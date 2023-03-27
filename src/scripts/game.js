@@ -45,6 +45,7 @@ const game = (() => {
     }
     function takeTurn(targetCoord) {
         humanTurn(targetCoord);
+        events.publish('toggleComputerBoard', ''); // subscribed by ui.js
         setTimeout(computerTurn, 500);
     }
     function humanTurn(targetCoord) {
@@ -57,10 +58,12 @@ const game = (() => {
     }
     function computerTurn() {
         computer.makeAttack(human.board);
+        events.publish('toggleComputerBoard', ''); // subscribed by ui.js
         if (human.board.isLoser()) {
             events.publish('winner', 'human'); // subscribed by ui.js
             resetBoardData();
         }
+
     }
     function updateComputerStrategy(sunk, hit, coord) {
         console.log('updateComputerStrategy()');
