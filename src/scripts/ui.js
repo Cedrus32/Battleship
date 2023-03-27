@@ -12,7 +12,6 @@ const ui = (() => {
         playing: false,
         targetCell: undefined,
         selectedShip: undefined,
-        // coordData: undefined, // todo change structure to coordSet, isValid key-value pairs
         coordData: {coordSet: undefined,
                     isValid: false,
                    },
