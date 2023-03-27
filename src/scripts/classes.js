@@ -291,6 +291,7 @@ class Computer extends Human {
 
     // attack drivers
     makeAttack(board) {
+        console.log(board);
         console.log(this.strategy.mode);
         if (this.strategy.mode === 'search') {
             this.randomizeAttack(board);

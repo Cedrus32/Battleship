@@ -386,6 +386,7 @@ const ui = (() => {
 
     // end game
     function endGame(winner) {
+        console.log(winner);
         state.playing = false;
         generateGameResult(winner);
     }

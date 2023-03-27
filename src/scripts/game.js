@@ -44,26 +44,21 @@ const game = (() => {
         computer.randomizeShips();
     }
     function takeTurn(targetCoord) {
-        humanTurn(targetCoord);
-        events.publish('toggleComputerBoard', ''); // subscribed by ui.js
-        setTimeout(computerTurn, 500);
-    }
-    function humanTurn(targetCoord) {
         human.sendAttack('computer', targetCoord, computer.board);
         if (computer.board.isLoser()) {
-            events.publish('winner', 'computer'); // subscribed by ui.js
+            events.publish('winner', 'human'); // subscribed by ui.js
             resetBoardData();
             return;
         }
-    }
-    function computerTurn() {
-        computer.makeAttack(human.board);
         events.publish('toggleComputerBoard', ''); // subscribed by ui.js
-        if (human.board.isLoser()) {
-            events.publish('winner', 'human'); // subscribed by ui.js
-            resetBoardData();
-        }
-
+        setTimeout(() => {
+            computer.makeAttack(human.board);
+            events.publish('toggleComputerBoard', ''); // subscribed by ui.js
+            if (human.board.isLoser()) {
+                events.publish('winner', 'computer'); // subscribed by ui.js
+                resetBoardData();
+            }
+        }, 500);
     }
     function updateComputerStrategy(sunk, hit, coord) {
         console.log('updateComputerStrategy()');
