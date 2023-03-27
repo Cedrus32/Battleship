@@ -12,8 +12,11 @@ const ui = (() => {
         playing: false,
         targetCell: undefined,
         selectedShip: undefined,
-        coordData: undefined, // todo chane structure to coordSet, isValid key-value pairs
-        direction: 'r'
+        // coordData: undefined, // todo change structure to coordSet, isValid key-value pairs
+        coordData: {coordSet: undefined,
+                    isValid: false,
+                   },
+        direction: 'r',
     }
 
     // event listeners
@@ -27,7 +30,7 @@ const ui = (() => {
             } else if (e.target.parentElement.parentElement.classList.contains('menu') && !e.target.parentElement.classList.contains('placed')) {
                 setMenuSelect(e.target.parentElement);
             } else if (e.target.classList.contains('cell')) {
-                if (state.placing && state.coordData[1]) {
+                if (state.placing && state.coordData.isValid) {
                     events.publish('placeShip', state.targetCell.id.split('-')[1], state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]); // subscribed by game.js
                     addShipPlaced();
                 } else if (!state.placing && e.target.classList.contains('placed')) {
@@ -161,7 +164,9 @@ const ui = (() => {
         state.playing = false;
         state.targetCell = undefined;
         state.selectedShip = undefined;
-        state.coordData = undefined;
+        state.coordData = {coordSet: undefined,
+                           isValid: false,
+                          };
         state.direction = 'r';
     }
 
@@ -241,15 +246,16 @@ const ui = (() => {
             state.direction = 'r';
         }
     }
-    function setBoardHover(coordSet, isValid) {
+    function setBoardHover(coords, validity) {
             removeCellHover();
-            state.coordData = [coordSet, isValid];
-            addCellHover(state.coordData[1]);
+            state.coordData.coordSet = coords;
+            state.coordData.isValid = validity;
+            addCellHover(state.coordData.isValid);
     }
     function addCellHover(isValid) {
-        for (let i = 0; i < state.coordData[0].length; i++) {
-            if (state.coordData[0][i].length <= 2) {
-                let cell = document.getElementById(`h-${state.coordData[0][i]}`);
+        for (let i = 0; i < state.coordData.coordSet.length; i++) {
+            if (state.coordData.coordSet[i].length <= 2) {
+                let cell = document.getElementById(`h-${state.coordData.coordSet[i]}`);
                 cell.classList.add('hover');
                 if (isValid) {
                     cell.classList.add('is-valid');
@@ -260,10 +266,10 @@ const ui = (() => {
         }
     }
     function removeCellHover() {
-        if (state.coordData !== undefined) {
-            for (let i = 0; i < state.coordData[0].length; i++) {
-                if (state.coordData[0][i].length <= 2) {
-                    let cell = document.getElementById(`h-${state.coordData[0][i]}`);
+        if (state.coordData.coordSet !== undefined) {
+            for (let i = 0; i < state.coordData.coordSet.length; i++) {
+                if (state.coordData.coordSet[i].length <= 2) {
+                    let cell = document.getElementById(`h-${state.coordData.coordSet[i]}`);
                     if (cell.classList.contains('placed')) {
                         cell.classList = 'cell placed';
                     } else {
@@ -275,14 +281,16 @@ const ui = (() => {
     }
     function addShipPlaced() {
         state.selectedShip.classList = 'ship placed';
-        for (let i = 0; i < state.coordData[0].length; i++) {
-            let cell = document.getElementById(`h-${state.coordData[0][i]}`);
+        for (let i = 0; i < state.coordData.coordSet.length; i++) {
+            let cell = document.getElementById(`h-${state.coordData.coordSet[i]}`);
             cell.classList = 'cell';
             cell.classList.add('placed');
         }
         state.placing = false;
         state.selectedShip = undefined;
-        state.coordData = undefined;
+        state.coordData = {coordSet: undefined,
+                           isValid: false,
+                          };
     }
     function removeShipPlaced(name, dir, length, coords) {
         for (let i = 0; i < coords.length; i++) {
@@ -290,7 +298,8 @@ const ui = (() => {
             cell.classList = 'cell hover is-valid';
         }
         state.selectedShip = document.getElementById(`${length}-${name}`);
-        state.coordData = [coords, true];
+        state.coordData.coordSet = coords;
+        state.coordData.isValid = true;
         state.dir = dir;
     }
 
