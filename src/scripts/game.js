@@ -44,12 +44,18 @@ const game = (() => {
         computer.randomizeShips();
     }
     function takeTurn(targetCoord) {
+        humanTurn(targetCoord);
+        setTimeout(computerTurn, 500);
+    }
+    function humanTurn(targetCoord) {
         human.sendAttack('computer', targetCoord, computer.board);
         if (computer.board.isLoser()) {
             events.publish('winner', 'computer'); // subscribed by ui.js
             resetBoardData();
             return;
         }
+    }
+    function computerTurn() {
         computer.makeAttack(human.board);
         if (human.board.isLoser()) {
             events.publish('winner', 'human'); // subscribed by ui.js
