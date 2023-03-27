@@ -12,13 +12,13 @@ const ui = (() => {
         playing: false,
         targetCell: undefined,
         selectedShip: undefined,
-        coordData: undefined,
+        coordData: undefined, // todo chane structure to coordSet, isValid key-value pairs
         direction: 'r'
     }
 
     // event listeners
     body.addEventListener('click', (e) => {
-        if (state.playing === false) {
+        if (!state.playing) {
             if (e.target.id === 'play-game' || e.target.id === 'play') {
                 play();
             } else if (e.target.id === 'restart-game' || e.target.id === 'restart') {
@@ -29,14 +29,14 @@ const ui = (() => {
             } else if (e.target.classList.contains('cell')) {
                 if (state.placing && state.coordData[1]) {
                     events.publish('placeShip', state.targetCell.id.split('-')[1], state.direction, state.selectedShip.id.split('-')[0], state.selectedShip.id.split('-')[1]); // subscribed by game.js
-                    placeShipUI();
+                    addShipPlaced();
                 } else if (!state.placing && e.target.classList.contains('placed')) {
                     state.placing = true;
                     events.publish('queryShipData', state.targetCell.id.split('-')[1]); // subscribed by game.js
                     events.publish('deleteShipObject', state.selectedShip.id.split('-')[1]); // subscribed by game.js
                 }
             }
-        } else if (state.playing === true) {
+        } else if (state.playing) {
             if (e.target.id === 'restart-game' || e.target.id === 'restart') {
                 generateAlertBox();
             } else if (e.target.id === 'confirm-restart' || e.target.id === 'confirm') {
@@ -53,7 +53,7 @@ const ui = (() => {
     });
     body.addEventListener('keydown', (e) => {
         let validKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-        if (state.playing === false) {
+        if (!state.playing) {
             if (validKeys.includes(e.key)) {
                 switch (e.key) {
                     case 'ArrowUp':
@@ -114,9 +114,9 @@ const ui = (() => {
     }
     function play() {
         // replace selected ship to original coords
-        if (state.placing === true) {
+        if (state.placing) {
             events.publish('replaceToOriginal', ''); // subscribed by game.js
-            placeShipUI();
+            addShipPlaced();
         }
         // generate ship tallies
         let i = 0;
@@ -211,7 +211,7 @@ const ui = (() => {
             i++;
         }
     }
-    function setSectionType(section, selector) {
+    function setSectionType(section, selector) { 
         if (section.classList.length > 0) {
             section.classList = '';
         }
@@ -226,27 +226,20 @@ const ui = (() => {
         if (state.selectedShip === undefined) {
             state.placing = true;
             state.selectedShip = targetShip;
-            addSelectInMenu(state.selectedShip);
-        } else {
-            if (targetShip === state.selectedShip) {
-                removeMenuSelect(state.selectedShip);
-                state.placing = false;
-                state.selectedShip = undefined;
-            } else if (targetShip !== state.selectedShip) {
-                removeMenuSelect(state.selectedShip);
-                state.selectedShip = targetShip;
-                addSelectInMenu(state.selectedShip);
-            }   
+            targetShip.classList.add('selected');
+        } else if (targetShip === state.selectedShip) {
+            targetShip.classList.remove('selected');
+            state.placing = false;
+            state.selectedShip = undefined;
+        } else if (targetShip !== state.selectedShip) {
+            targetShip.classList.remove('selected');
+            state.selectedShip = targetShip;
+            targetShip.classList.add('selected');
         }
+        // reset direction after placement
         if (state.direction !== 'r') {
             state.direction = 'r';
         }
-    }
-    function addSelectInMenu(ship) {
-        ship.classList.add('selected');
-    }
-    function removeMenuSelect(ship) {
-        ship.classList.remove('selected');
     }
     function setBoardHover(coordSet, isValid) {
             removeCellHover();
@@ -280,7 +273,7 @@ const ui = (() => {
             }
         }
     }
-    function placeShipUI() {
+    function addShipPlaced() {
         state.selectedShip.classList = 'ship placed';
         for (let i = 0; i < state.coordData[0].length; i++) {
             let cell = document.getElementById(`h-${state.coordData[0][i]}`);
@@ -291,7 +284,7 @@ const ui = (() => {
         state.selectedShip = undefined;
         state.coordData = undefined;
     }
-    function replaceShipUI(name, dir, length, coords) {
+    function removeShipPlaced(name, dir, length, coords) {
         for (let i = 0; i < coords.length; i++) {
             let cell = document.getElementById(`h-${coords[i]}`);
             cell.classList = 'cell hover is-valid';
@@ -324,18 +317,13 @@ const ui = (() => {
     function displayHit(player, coord, hit) {
         if (player === 'computer') {
             state.targetCell = document.getElementById(`c-${coord}`);
-            if (hit) {
-                state.targetCell.classList.add('hit');
-            } else if (!hit) {
-                state.targetCell.classList.add('miss');
-            }
         } else if (player === 'human') {
-            let target = document.getElementById(`h-${coord}`);
-            if (hit) {
-                target.classList.add('hit');
-            } else if (!hit && !target.classList.contains('miss')) {
-                target.classList.add('miss');
-            }
+            state.targetCell = document.getElementById(`h-${coord}`);
+        }
+        if (hit) {
+            state.targetCell.classList.add('hit');
+        } else if (!hit) {
+            state.targetCell.classList.add('miss');
         }
     }
     function displaySunk(player, name) {
@@ -358,7 +346,7 @@ const ui = (() => {
         let text = create.span('Restart game?');
         alertContainer.appendChild(text);
         let buttonContainer = create.div('');
-        for (let i = 0; i < options.length; i++) {
+        for (let i =0 ; i < options.length; i++) {
             let button = create.button('', `${options[i]}`, `#${options[i]}-restart`);
             let image = create.img(`./icons/${options[i]}.svg`, `${options[i]}`, `#${options[i]}`);
             button.appendChild(image);
@@ -402,7 +390,7 @@ const ui = (() => {
 
     // event subscriptions
     events.subscribe('receiveCoordData', setBoardHover); // published by game.js (queryCoordData)
-    events.subscribe('receiveShipData', replaceShipUI); // published by game.js (queryShipData, replaceToOriginal)
+    events.subscribe('receiveShipData', removeShipPlaced); // published by game.js (queryShipData, replaceToOriginal)
     events.subscribe('makePlayLive', makePlayLive); // published by classes.js (computer.randomizeShips)
     events.subscribe('displayAttack', displayHit); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('displaySunk', displaySunk); // published by classes.js (gameboard.receiveAttack)
