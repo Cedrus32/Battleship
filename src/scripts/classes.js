@@ -221,6 +221,8 @@ class Gameboard {
                 }
                 events.publish('displayBuffer', player, buffer); // subscribed by ui.js
             }
+            events.publish('setMessageTime', player, 2000); // subscribed by game.js
+            events.publish('updateTicker', player, ship.sunk, ship.name); // subscribed by ui.js
         }
         events.publish('displayAttack', player, coord, hit); // subscribed by ui.js
         if (player === 'human') {

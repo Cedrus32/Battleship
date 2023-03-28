@@ -51,18 +51,24 @@ body,
     grid-template-columns: var(--sidebar-area) var(--board-area);
     grid-template-rows: auto;
     grid-template-areas: '.       title'
+                         '.       ticker'
                          'sidebar board';
 }
 
 #computer {
     grid-template-columns: var(--board-area) var(--sidebar-area);
     grid-template-rows: auto;
-    grid-template-areas: 'title .'
-                         'board sidebar';
+    grid-template-areas: 'title  .'
+                         'ticker .'
+                         'board  sidebar';
 }
 
     .title {
         grid-area: title;
+    }
+
+    .ticker {
+        grid-area: ticker;
     }
 
     .menu {

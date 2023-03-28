@@ -3,7 +3,8 @@ import create from './create.js';
 
 const ui = (() => {
     let playerBoards = [document.getElementById('human').lastElementChild, document.getElementById('computer').lastElementChild];
-    let shipContainers = [document.getElementById('human').children[1], document.getElementById('computer').children[1]];
+    let shipContainers = [document.getElementById('human').children[2], document.getElementById('computer').children[2]];
+    let tickers = [document.getElementById('human').children[1], document.getElementById('computer').children[1]]
     let playButton = document.getElementById('play-game');
     let body = document.querySelector('body');
 
@@ -11,6 +12,7 @@ const ui = (() => {
         placing: false,
         playing: false,
         targetCell: undefined,
+        targetTicker: undefined,
         selectedShip: undefined,
         coordData: {coordSet: undefined,
                     isValid: false,
@@ -48,6 +50,7 @@ const ui = (() => {
             } else if (e.target.id === 'cancel-restart' || e.target.id === 'cancel') {
                 removeAlertBox();
             } else if (state.computerBoardEnabled === true && e.target.parentElement.parentElement.parentElement !== null && e.target.parentElement.parentElement.parentElement.id === 'computer' && e.target.classList.contains('cell') && !e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
+                disableComputerBoard();
                 e.target.classList.remove('attack');
                 state.targetCell = e.target;
                 events.publish('takeTurn', e.target.id.split('-')[1]); // subscribed by game.js
@@ -311,14 +314,6 @@ const ui = (() => {
         playButton.disabled = false;
         playButton.ariaDisabled = false;
     }
-    function toggleComputerBoard() {
-        console.log(state.computerBoardEnabled);
-        if (state.computerBoardEnabled === true) {
-            state.computerBoardEnabled = false;
-        } else if (state.computerBoardEnabled === false) {
-            state.computerBoardEnabled = true;
-        }
-    }
     function generateShipTallies(tallyContainer, index) {
         let playerType;
         if (index === 0) {
@@ -333,6 +328,12 @@ const ui = (() => {
             container.removeChild(container.lastElementChild);
         }
     }
+    function disableComputerBoard() {
+        state.computerBoardEnabled = false;
+    }
+    function enableComputerBoard() {
+        state.computerBoardEnabled = true;
+    }
     function displayHit(player, coord, hit) {
         if (player === 'computer') {
             state.targetCell = document.getElementById(`c-${coord}`);
@@ -343,6 +344,9 @@ const ui = (() => {
             state.targetCell.classList.add('hit');
         } else if (!hit) {
             state.targetCell.classList.add('miss');
+            if (player === 'human') {
+                enableComputerBoard();
+            }
         }
     }
     function displaySunk(player, name) {
@@ -358,6 +362,24 @@ const ui = (() => {
         for (let i = 0; i < bufferCoords.length; i++) {
             displayHit(player, bufferCoords[i], false);
         }
+    }
+    function updateTicker(player, sunk, shipName) {
+        if (player === 'human') {
+            state.targetTicker = tickers[0];
+        } else if (player === 'computer') {
+            state.targetTicker = tickers[1];
+        }
+        if (!sunk) {
+            state.targetTicker.textContent = `You hit my ${shipName}!`;
+        } else if (sunk) {
+            state.targetTicker.textContent = `You sunk my ${shipName}!`;
+        }
+        setTimeout(() => {
+            state.targetTicker.textContent = '';
+            if (player === 'human') {
+                enableComputerBoard();
+            }
+        }, 2000)
     }
     function generateAlertBox() {
         let options = ['cancel', 'confirm'];
@@ -416,7 +438,8 @@ const ui = (() => {
     events.subscribe('displaySunk', displaySunk); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('winner', endGame); // published by game.js (takeTurn)
     events.subscribe('displayBuffer', displayBuffer); // published by classes.js (gameboard.receiveAttack)
-    events.subscribe('toggleComputerBoard', toggleComputerBoard); // published by game.js (computerTurn)
+    events.subscribe('disableComputerBoard', disableComputerBoard); // published by game.js (computerTurn)
+    events.subscribe('updateTicker', updateTicker); // published by classes.js (gameboard.recieveAttack)
 
     return {
         init, // used by index.js

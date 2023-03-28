@@ -4,6 +4,8 @@ import makePlayer from './classes.js';
 const game = (() => {
     let human;
     let computer;
+    let thinkingTime = 1500;
+    let messageTime;
 
     // driver methods
     function init() {
@@ -44,21 +46,26 @@ const game = (() => {
         computer.randomizeShips();
     }
     function takeTurn(targetCoord) {
+        messageTime = 0;
         human.sendAttack('computer', targetCoord, computer.board);
         if (computer.board.isLoser()) {
             events.publish('winner', 'human'); // subscribed by ui.js
             resetBoardData();
             return;
         }
-        events.publish('toggleComputerBoard', ''); // subscribed by ui.js
         setTimeout(() => {
             computer.makeAttack(human.board);
-            events.publish('toggleComputerBoard', ''); // subscribed by ui.js
             if (human.board.isLoser()) {
                 events.publish('winner', 'computer'); // subscribed by ui.js
                 resetBoardData();
+                // return; ??
             }
-        }, 500);
+        }, (thinkingTime + messageTime));
+    }
+    function setMessageTime(player, value) {
+        if (player === 'computer') {
+            messageTime = value;
+        }
     }
     function updateComputerStrategy(sunk, hit, coord) {
         console.log('updateComputerStrategy()');
@@ -80,6 +87,7 @@ const game = (() => {
     events.subscribe('replaceToOriginal', replaceToOriginal); // published by ui.js (body.onClick)
     events.subscribe('generateComputerShips', generateComputerShips); // published by ui.js (body.onClick)
     events.subscribe('takeTurn', takeTurn); // published by ui.js (body.onClick)
+    events.subscribe('setMessageTime', setMessageTime); // published by classes.js (gameboard.receiveAttack)
     events.subscribe('receiveAttackResult', updateComputerStrategy); // published by classes.js (receiveAttack)
     events.subscribe('addBufferToComputerAttacks', addBufferToComputerAttacks); // published by classes.js (receiveAttack)
 
